@@ -12,8 +12,6 @@
 
 Screenshot of extension options:
 
-![Sample extension options output](media/previewer.png)
-
 ## Features
 
 - Uses Manifest v3 ([not yet compatible with Firefox](https://bugzilla.mozilla.org/show_bug.cgi?id=1578284))
@@ -44,7 +42,6 @@ Using [web-ext](https://extensionworkshop.com/documentation/develop/getting-star
 1. Run `npm run watch` to watch for file changes and build continuously
 1. Run `npm install --global web-ext` (only only for the first time)
 1. In another terminal, run `web-ext run -t chromium`
-1. Check that the extension is loaded by opening the extension options ([in Firefox](media/extension_options_firefox.png) or [in Chrome](media/extension_options_chrome.png)).
 
 #### Manually
 
