@@ -53,12 +53,12 @@
 	"targets": {
 		"default": {
 			"source": "src/manifest.json",
-			"distDir": "./distribution",
+			"distDir": "./dist",
 			"sourceMap": false
 		}
 	},
 	"webExt": {
-		"sourceDir": "distribution",
+		"sourceDir": "dist",
 		"run": {
 			"startUrl": [
 				"https://github.com/fregante/browser-extension-template"
