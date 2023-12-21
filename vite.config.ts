@@ -17,6 +17,7 @@ const generateManifest = () => {
 export default defineConfig({
   plugins: [
     webExtension({
+      additionalInputs: ["src/preline.ts"],
       manifest: generateManifest,
       watchFilePaths: ["package.json", "manifest.json"],
     }),
