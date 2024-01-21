@@ -1,19 +1,34 @@
-import logger from "./logger";
+import { optionsStorage } from "@@/shared";
+import _ from "lodash-es";
+import { shorts, videos } from "./modules";
 
-let intervalId: NodeJS.Timeout;
+window.addEventListener("load", async () => {
+  const options = await optionsStorage.getAll();
 
-window.addEventListener("load", () => {
-  clearInterval(intervalId);
+  if (!options.enabled) return;
 
-  intervalId = setInterval(() => {
-    const navigationMenuItems = document.querySelector(
-      "#sections > *:first-child > #items",
-    )?.children;
+  const run = async () => {
+    shorts.removeAccountTab();
+    shorts.removeExplore();
+    shorts.removeNavigation();
 
-    if (!navigationMenuItems || navigationMenuItems.length < 3) return;
+    if (options.videos.enabled) {
+      await videos.init();
 
-    navigationMenuItems.item(1)?.remove();
+      if (options.videos.disableShortVideos.enabled) {
+        videos.removeShortVideos();
+      }
+    }
+  };
 
-    logger.log("Removed Shorts tab");
-  }, 10);
+  const body = document.querySelector("body");
+
+  if (!body) return;
+
+  new MutationObserver(_.debounce(() => run(), 100)).observe(body, {
+    childList: true,
+    subtree: true,
+  });
+
+  run();
 });

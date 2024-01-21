@@ -8,10 +8,17 @@
     "dev": "vite build --watch --mode=development",
     "build": "vite build"
   },
+  "dependencies": {
+    "date-fns": "^3.3.0",
+    "lodash-es": "^4.17.21",
+    "webext-options-sync": "^4.2.1"
+  },
   "devDependencies": {
     "@biomejs/biome": "^1.5.1",
+    "@types/lodash-es": "^4.17.12",
     "typescript": "^5.3.3",
     "vite": "^5.0.11",
-    "vite-plugin-web-extension": "^4.1.1"
+    "vite-plugin-web-extension": "^4.1.1",
+    "vite-tsconfig-paths": "^4.3.1"
   }
 }
