@@ -8,16 +8,16 @@ window.addEventListener("load", async () => {
   if (!options.enabled) return;
 
   const run = async () => {
-    shorts.removeAccountTab();
-    shorts.removeExplore();
-    shorts.removeNavigation();
+    if (options.shorts.enabled) {
+      if (options.shorts.removeAccountTab) shorts.removeAccountTab();
+      if (options.shorts.removeExplore) shorts.removeExplore();
+      if (options.shorts.removeNavigation) shorts.removeNavigation();
+    }
 
     if (options.videos.enabled) {
       await videos.init();
 
-      if (options.videos.disableShortVideos.enabled) {
-        videos.removeShortVideos();
-      }
+      if (options.videos.disableShortVideos.enabled) videos.removeShortVideos();
     }
   };
 
