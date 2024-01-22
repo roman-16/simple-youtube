@@ -3,25 +3,25 @@ import _ from "lodash-es";
 
 const navigation = {
   removeDesktop: () => {
-    const navigationMenuItems = document.querySelector(
-      "#sections > *:first-child > #items",
-    )?.children;
+    const shortsItem = document.querySelector(
+      "#sections > *:first-child > #items > *:nth-child(2) .title",
+    );
 
-    if (!navigationMenuItems || navigationMenuItems.length < 3) return;
+    if (shortsItem?.innerHTML.trim().toLowerCase() !== "shorts") return;
 
-    navigationMenuItems.item(1)?.remove();
+    shortsItem.closest("ytd-guide-entry-renderer")?.remove();
 
     logger.log("Removed shorts tab on desktop");
   },
 
   removeMobile: () => {
-    const navigationMenuItems = document.querySelector(
-      'ytd-mini-guide-renderer[role="navigation"] > #items',
-    )?.children;
+    const shortsItem = document.querySelector(
+      'ytd-mini-guide-renderer[role="navigation"] > #items > *:nth-child(2) .title',
+    );
 
-    if (!navigationMenuItems || navigationMenuItems.length < 5) return;
+    if (shortsItem?.innerHTML.trim().toLowerCase() !== "shorts") return;
 
-    navigationMenuItems.item(1)?.remove();
+    shortsItem.closest("ytd-mini-guide-entry-renderer")?.remove();
 
     logger.log("Removed shorts tab on mobile");
   },

@@ -21,6 +21,12 @@ export default defineConfig({
     webExtension({
       manifest: generateManifest,
       watchFilePaths: ["package.json", "manifest.json"],
+      webExtConfig: {
+        chromiumProfile: "./chromiumDevelopment",
+        keepProfileChanges: true,
+        profileCreateIfMissing: true,
+        startUrl: "https://youtube.com",
+      },
     }),
   ],
 });

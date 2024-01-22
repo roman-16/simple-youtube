@@ -3,6 +3,12 @@ import OptionsSync from "webext-options-sync";
 
 const defaults = {
   enabled: true,
+  shorts: {
+    enabled: true,
+    removeAccountTab: true,
+    removeExplore: true,
+    removeNavigation: true,
+  },
   videos: {
     enabled: true,
     disableShortVideos: {
