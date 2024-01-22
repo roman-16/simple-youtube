@@ -14,6 +14,7 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "skipLibCheck": true,
+    "jsx": "react-jsx",
     "baseUrl": "./src",
     "paths": {
       "@/*": ["./contentScript/*"],
