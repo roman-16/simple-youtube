@@ -2,3 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 @tailwind variants;
+
+*:focus {
+  outline: none;
+}
+
+input.appearance-textfield::-webkit-outer-spin-button,
+input.appearance-textfield::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+input.appearance-textfield {
+  -moz-appearance: textfield;
+}

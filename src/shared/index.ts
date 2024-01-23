@@ -1,1 +1,1 @@
-export { default as optionsStorage } from "./optionsStorage";
+export { default as optionsStorage, type Options } from "./optionsStorage";

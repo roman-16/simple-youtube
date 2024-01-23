@@ -9,9 +9,9 @@ const videos = {
     const options = await optionsStorage.getAll();
 
     maxLength = add(new Date(0), {
-      hours: options.videos.disableShortVideos.hours,
-      minutes: options.videos.disableShortVideos.minutes,
-      seconds: options.videos.disableShortVideos.seconds,
+      hours: options.videos.removeShortVideos.hours,
+      minutes: options.videos.removeShortVideos.minutes,
+      seconds: options.videos.removeShortVideos.seconds,
     });
   },
 

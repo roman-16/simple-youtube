@@ -17,7 +17,7 @@ window.addEventListener("load", async () => {
     if (options.videos.enabled) {
       await videos.init();
 
-      if (options.videos.disableShortVideos.enabled) videos.removeShortVideos();
+      if (options.videos.removeShortVideos.enabled) videos.removeShortVideos();
     }
   };
 
