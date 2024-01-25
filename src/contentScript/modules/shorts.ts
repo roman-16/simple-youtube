@@ -1,5 +1,4 @@
 import logger from "@/logger";
-import _ from "lodash-es";
 
 const navigation = {
   removeDesktop: () => {

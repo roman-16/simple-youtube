@@ -25,10 +25,12 @@ export default defineConfig({
       watchFilePaths: ["package.json", "manifest.json"],
       webExtConfig: {
         chromiumProfile: "./chromiumDevelopment",
+        firefoxProfile: "./firefoxDevelopment",
         keepProfileChanges: true,
         profileCreateIfMissing: true,
         startUrl: "https://youtube.com",
       },
+      browser: process.env.BROWSER ?? "chrome",
     }),
   ],
 });
