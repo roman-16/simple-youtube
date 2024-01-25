@@ -2,7 +2,7 @@ import { optionsStorage } from "@@/shared";
 import _ from "lodash-es";
 import { shorts, videos } from "./modules";
 
-window.addEventListener("load", async () => {
+(async () => {
   const options = await optionsStorage.getAll();
 
   if (!options.enabled) return;
@@ -31,4 +31,4 @@ window.addEventListener("load", async () => {
   });
 
   run();
-});
+})();
