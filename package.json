@@ -9,7 +9,7 @@
     "dev": "vite dev",
     "build": "rm -rf build/ dist/ && mkdir build/ && npm run build:chrome && npm run build:firefox",
     "build:chrome": "BROWSER=chrome vite build && cd dist/ && zip -r ../build/chrome-extension.zip * && cd ..",
-    "build:firefox": "BROWSER=firefox vite build && cd dist/ && zip -r ../build/firefox-extension.zip * && cd ::"
+    "build:firefox": "BROWSER=firefox vite build && cd dist/ && zip -r ../build/firefox-extension.zip * && cd .."
   },
   "dependencies": {
     "date-fns": "^3.3.0",
