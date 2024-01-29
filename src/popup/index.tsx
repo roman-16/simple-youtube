@@ -8,7 +8,7 @@ const App = () => {
   if (!options) return null;
 
   return (
-    <div className="h-64 w-64 m-4 flex flex-col gap-2">
+    <div className="min-w-64 m-4 flex flex-col gap-2">
       <Switch
         label="Enabled"
         checked={options.enabled}
@@ -26,6 +26,13 @@ const App = () => {
           {options.shorts.enabled && (
             <div className="ml-4 flex flex-col gap-2">
               <Switch
+                label="Redirect to video"
+                checked={options.shorts.redirectToVideo}
+                onCheckedChange={(checked) =>
+                  setOptions({ shorts: { redirectToVideo: checked } })
+                }
+              />
+              <Switch
                 label="Remove from account tab"
                 checked={options.shorts.removeAccountTab}
                 onCheckedChange={(checked) =>
@@ -34,11 +41,30 @@ const App = () => {
               />
               <Switch
                 label="Remove from explore"
-                checked={options.shorts.removeExplore}
+                checked={options.shorts.removeExplore.enabled}
                 onCheckedChange={(checked) =>
-                  setOptions({ shorts: { removeExplore: checked } })
+                  setOptions({
+                    shorts: { removeExplore: { enabled: checked } },
+                  })
                 }
               />
+              {options.shorts.removeExplore.enabled && (
+                <div className="ml-4 flex flex-col gap-2">
+                  <Switch
+                    label="Remove from Subscriptions"
+                    checked={
+                      options.shorts.removeExplore.removeFromSubscriptions
+                    }
+                    onCheckedChange={(checked) =>
+                      setOptions({
+                        shorts: {
+                          removeExplore: { removeFromSubscriptions: checked },
+                        },
+                      })
+                    }
+                  />
+                </div>
+              )}
               <Switch
                 label="Remove from navigation"
                 checked={options.shorts.removeNavigation}
@@ -68,20 +94,41 @@ const App = () => {
                 }
               />
               {options.videos.removeShortVideos.enabled && (
-                <div className="ml-10 flex gap-1 text-base">
-                  Max length
-                  <TimeInput
-                    hours={options.videos.removeShortVideos.hours}
-                    minutes={options.videos.removeShortVideos.minutes}
-                    seconds={options.videos.removeShortVideos.seconds}
-                    onHoursChange={(hours) =>
-                      setOptions({ videos: { removeShortVideos: { hours } } })
+                <div className="ml-4 flex flex-col gap-2">
+                  <div className="ml-6 flex gap-1 text-base">
+                    Max length
+                    <TimeInput
+                      hours={options.videos.removeShortVideos.hours}
+                      minutes={options.videos.removeShortVideos.minutes}
+                      seconds={options.videos.removeShortVideos.seconds}
+                      onHoursChange={(hours) =>
+                        setOptions({ videos: { removeShortVideos: { hours } } })
+                      }
+                      onMinutesChange={(minutes) =>
+                        setOptions({
+                          videos: { removeShortVideos: { minutes } },
+                        })
+                      }
+                      onSecondsChange={(seconds) =>
+                        setOptions({
+                          videos: { removeShortVideos: { seconds } },
+                        })
+                      }
+                    />
+                  </div>
+                  <Switch
+                    label="Remove from Subscriptions"
+                    checked={
+                      options.videos.removeShortVideos.removeFromSubscriptions
                     }
-                    onMinutesChange={(minutes) =>
-                      setOptions({ videos: { removeShortVideos: { minutes } } })
-                    }
-                    onSecondsChange={(seconds) =>
-                      setOptions({ videos: { removeShortVideos: { seconds } } })
+                    onCheckedChange={(checked) =>
+                      setOptions({
+                        videos: {
+                          removeShortVideos: {
+                            removeFromSubscriptions: checked,
+                          },
+                        },
+                      })
                     }
                   />
                 </div>

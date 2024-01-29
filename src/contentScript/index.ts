@@ -9,8 +9,11 @@ import { shorts, videos } from "./modules";
 
   const run = async () => {
     if (options.shorts.enabled) {
+      await shorts.init();
+
+      if (options.shorts.redirectToVideo) shorts.redirectToVideo();
       if (options.shorts.removeAccountTab) shorts.removeAccountTab();
-      if (options.shorts.removeExplore) shorts.removeExplore();
+      if (options.shorts.removeExplore.enabled) shorts.removeExplore();
       if (options.shorts.removeNavigation) shorts.removeNavigation();
     }
 
@@ -25,10 +28,13 @@ import { shorts, videos } from "./modules";
 
   if (!body) return;
 
-  new MutationObserver(_.debounce(() => run(), 100)).observe(body, {
-    childList: true,
-    subtree: true,
-  });
+  new MutationObserver(_.debounce(() => run(), 100, { leading: true })).observe(
+    body,
+    {
+      childList: true,
+      subtree: true,
+    },
+  );
 
   run();
 })();
