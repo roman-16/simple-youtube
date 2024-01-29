@@ -26,7 +26,7 @@ const Switch = ({ checked, label, onCheckedChange, ...props }: Props) => (
     <span className="absolute inset-y-0 start-0 m-0.5 h-4 w-4 rounded-full bg-white transition-all peer-checked:start-3" />
 
     {label && (
-      <div className="ml-10 text-base whitespace-nowrap text-gray-400 peer-checked:text-black">
+      <div className="ml-10 whitespace-nowrap text-gray-400 peer-checked:text-black">
         {label}
       </div>
     )}
