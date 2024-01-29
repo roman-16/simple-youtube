@@ -1,4 +1,8 @@
 import logger from "@/logger";
+import { Options, optionsStorage } from "@@/shared";
+
+let isInitialized = false;
+let options: Options | undefined = undefined;
 
 const navigation = {
   removeDesktop: () => {
@@ -27,6 +31,24 @@ const navigation = {
 };
 
 const shorts = {
+  init: async () => {
+    if (isInitialized) return;
+
+    options = await optionsStorage.getAll();
+
+    isInitialized = true;
+  },
+
+  redirectToVideo: () => {
+    const path = window.location.pathname.split("/");
+
+    if (!path[1]?.toLowerCase().startsWith("shorts")) return;
+
+    window.location.href = `/watch?v=${path[2]}`;
+
+    logger.log("Redirect from shorts to video");
+  },
+
   removeAccountTab: () => {
     const browseItem = document.querySelector(
       '#tabsContent yt-tab-shape[tab-title="Shorts"]',
@@ -40,6 +62,14 @@ const shorts = {
   },
 
   removeExplore: () => {
+    const path = window.location.pathname.toLowerCase();
+
+    if (
+      !options?.shorts.removeExplore.removeFromSubscriptions &&
+      path.startsWith("/feed/subscriptions")
+    )
+      return;
+
     const browseItem = document.querySelector(
       "#contents > ytd-rich-section-renderer:has(*[is-slim-media])",
     );

@@ -6,8 +6,12 @@ const defaults = {
   enabled: true,
   shorts: {
     enabled: true,
+    redirectToVideo: true,
     removeAccountTab: true,
-    removeExplore: true,
+    removeExplore: {
+      enabled: true,
+      removeFromSubscriptions: false,
+    },
     removeNavigation: true,
   },
   videos: {
@@ -17,6 +21,7 @@ const defaults = {
       hours: 0,
       minutes: 1,
       seconds: 0,
+      removeFromSubscriptions: false,
     },
   },
 };

@@ -1,22 +1,38 @@
 import logger from "@/logger";
-import { optionsStorage } from "@@/shared";
+import { Options, optionsStorage } from "@@/shared";
 import { add, isAfter } from "date-fns";
 
+let isInitialized = false;
+let options: Options | undefined = undefined;
 let maxLength = new Date(0);
 
 const videos = {
   init: async () => {
-    const options = await optionsStorage.getAll();
+    if (isInitialized) return;
+
+    options = await optionsStorage.getAll();
 
     maxLength = add(new Date(0), {
       hours: options.videos.removeShortVideos.hours,
       minutes: options.videos.removeShortVideos.minutes,
       seconds: options.videos.removeShortVideos.seconds,
     });
+
+    isInitialized = true;
   },
 
   removeShortVideos: () => {
-    const videoLengths = document.querySelectorAll("#length");
+    const path = window.location.pathname.toLowerCase();
+
+    if (
+      !options?.videos.removeShortVideos.removeFromSubscriptions &&
+      path.startsWith("/feed/subscriptions")
+    )
+      return;
+
+    const videoLengths = document.querySelectorAll(
+      "#length, #text.ytd-thumbnail-overlay-time-status-renderer",
+    );
 
     videoLengths.forEach((videoLength) => {
       if (videoLength.children.length > 0) return;
@@ -46,6 +62,7 @@ const videos = {
       if (isAfter(length, maxLength)) return;
 
       videoLength.closest("ytd-rich-item-renderer")?.remove();
+      videoLength.closest("ytd-compact-video-renderer")?.remove();
 
       logger.log("Removed short video");
     });
