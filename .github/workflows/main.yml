@@ -6,12 +6,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        name: Checkout
       - uses: actions/setup-node@v4
+        name: Setup Node.js
         with:
           node-version: lts/*
       - run: npm ci
+        name: Install
       - run: npm run build
+        name: Build
       - uses: trmcnvn/chrome-addon@v2
+        name: Chrome publish
         with:
           extension: iecgbpoggpmlohjeojnjjihabobaaeek
           zip: build/chrome-extension.zip
@@ -19,6 +24,7 @@ jobs:
           client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
           refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}
       - uses: trmcnvn/firefox-addon@v1
+        name: Firefox publish
         with:
           uuid: roman@lerchster.dev
           xpi: build/firefox-extension.zip
