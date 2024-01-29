@@ -11,3 +11,10 @@ jobs:
           node-version: lts/*
       - run: npm ci
       - run: npm run build
+      - uses: trmcnvn/firefox-addon@v1
+        with:
+          uuid: roman@lerchster.dev
+          xpi: build/firefox-extension.zip
+          manifest: build/firefox-manifest.json
+          api-key: ${{ secrets.FIREFOX_API_KEY }}
+          api-secret: ${{ secrets.FIREFOX_API_SECRET }}
