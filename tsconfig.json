@@ -17,8 +17,7 @@
     "jsx": "react-jsx",
     "baseUrl": "./src",
     "paths": {
-      "@/*": ["./contentScript/*"],
-      "@@/*": ["./*"],
+      "@/*": ["./*"],
     }
   },
   "include": ["src"]
