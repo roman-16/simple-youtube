@@ -2,7 +2,7 @@ name: publish
 run-name: Publish ${{ inputs.version }}
 on: [workflow_dispatch]
 jobs:
-  publish-chrome:
+  publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -11,6 +11,13 @@ jobs:
           node-version: lts/*
       - run: npm ci
       - run: npm run build
+      - uses: trmcnvn/chrome-addon@v2
+        with:
+          extension: iecgbpoggpmlohjeojnjjihabobaaeek
+          zip: build/chrome-extension.zip
+          client-id: ${{ secrets.CHROME_CLIENT_ID }}
+          client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
+          refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}
       - uses: trmcnvn/firefox-addon@v1
         with:
           uuid: roman@lerchster.dev
