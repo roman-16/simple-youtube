@@ -1,5 +1,5 @@
-import logger from "@/logger";
-import { Options, optionsStorage } from "@@/shared";
+import logger from "@/contentScript/logger";
+import { Options, optionsStorage } from "@/shared";
 
 let isInitialized = false;
 let options: Options | undefined = undefined;

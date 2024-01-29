@@ -1,4 +1,4 @@
-import { Options, optionsStorage } from "@@/shared";
+import { Options, optionsStorage } from "@/shared";
 import { useCallback, useEffect, useState } from "react";
 
 const useOptionsStorage = () => {
