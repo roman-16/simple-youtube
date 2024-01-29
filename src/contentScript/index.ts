@@ -1,4 +1,4 @@
-import { optionsStorage } from "@@/shared";
+import { optionsStorage } from "@/shared";
 import _ from "lodash-es";
 import { shorts, videos } from "./modules";
 
