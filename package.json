@@ -2,7 +2,7 @@
   "name": "simple-youtube",
   "description": "Simplify YouTube",
   "private": true,
-  "version": "1.0.0",
+  "version": "2.0.0",
   "type": "module",
   "scripts": {
     "compile": "tsc --noEmit",
