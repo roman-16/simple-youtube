@@ -3,6 +3,7 @@ import { Options, optionsStorage } from "@/shared";
 
 let isInitialized = false;
 let options: Options | undefined = undefined;
+let redirected = false;
 
 const navigation = {
   removeDesktop: () => {
@@ -42,9 +43,11 @@ const shorts = {
   redirectToVideo: () => {
     const path = window.location.pathname.split("/");
 
-    if (!path[1]?.toLowerCase().startsWith("shorts")) return;
+    if (!path[1]?.toLowerCase().startsWith("shorts") || redirected) return;
 
-    window.location.href = `/watch?v=${path[2]}`;
+    window.location.replace(`/watch?v=${path[2]}`);
+
+    redirected = true;
 
     logger.log("Redirect from shorts to video");
   },
