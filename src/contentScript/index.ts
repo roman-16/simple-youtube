@@ -1,5 +1,6 @@
 import { optionsStorage } from "@/shared";
 import _ from "lodash-es";
+import logger from "./logger";
 import { shorts, videos } from "./modules";
 
 (async () => {
@@ -28,13 +29,10 @@ import { shorts, videos } from "./modules";
 
   if (!body) return;
 
-  new MutationObserver(_.debounce(() => run(), 100, { leading: true })).observe(
-    body,
-    {
-      childList: true,
-      subtree: true,
-    },
-  );
+  new MutationObserver(run).observe(body, {
+    childList: true,
+    subtree: true,
+  });
 
   run();
 })();
