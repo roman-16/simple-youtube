@@ -34,7 +34,7 @@ jobs:
         with:
           name: extensions
           path: .
-      - run: ls build/
+      - run: ls .
         name: Chrome publish
       # - uses: trmcnvn/chrome-addon@v2
       # with:
@@ -52,7 +52,7 @@ jobs:
         with:
           name: extensions
           path: .
-      - run: ls build/
+      - run: ls .
         name: Firefox publish
       # - uses: trmcnvn/firefox-addon@v1
       # with:
