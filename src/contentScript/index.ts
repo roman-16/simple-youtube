@@ -1,6 +1,5 @@
 import { optionsStorage } from "@/shared";
 import _ from "lodash-es";
-import logger from "./logger";
 import { shorts, videos } from "./modules";
 
 (async () => {
