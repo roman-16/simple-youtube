@@ -12,7 +12,7 @@ import { shorts, videos } from "./modules";
       await shorts.init();
 
       if (options.shorts.redirectToVideo) shorts.redirectToVideo();
-      if (options.shorts.removeAccountTab) shorts.removeAccountTab();
+      if (options.shorts.removeFromChannel) shorts.removeFromChannel();
       if (options.shorts.removeExplore.enabled) shorts.removeExplore();
       if (options.shorts.removeNavigation) shorts.removeNavigation();
     }

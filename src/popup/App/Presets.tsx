@@ -10,7 +10,7 @@ const presets: { name: string; options: Options }[] = [
       shorts: {
         enabled: true,
         redirectToVideo: true,
-        removeAccountTab: true,
+        removeFromChannel: true,
         removeExplore: {
           enabled: true,
           removeFromSubscriptions: false,
@@ -36,7 +36,7 @@ const presets: { name: string; options: Options }[] = [
       shorts: {
         enabled: true,
         redirectToVideo: true,
-        removeAccountTab: true,
+        removeFromChannel: true,
         removeExplore: {
           enabled: true,
           removeFromSubscriptions: true,

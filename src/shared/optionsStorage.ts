@@ -7,7 +7,7 @@ const defaults = {
   shorts: {
     enabled: true,
     redirectToVideo: true,
-    removeAccountTab: true,
+    removeFromChannel: true,
     removeExplore: {
       enabled: true,
       removeFromSubscriptions: false,

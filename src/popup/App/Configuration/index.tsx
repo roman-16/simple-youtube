@@ -33,10 +33,10 @@ const Configuration = ({ ...props }: React.ComponentProps<typeof Section>) => {
                 }
               />
               <Switch
-                label="Remove from account tab"
-                checked={options.shorts.removeAccountTab}
+                label="Remove from channel"
+                checked={options.shorts.removeFromChannel}
                 onCheckedChange={(checked) =>
-                  setOptions({ shorts: { removeAccountTab: checked } })
+                  setOptions({ shorts: { removeFromChannel: checked } })
                 }
               />
               <Switch
@@ -51,7 +51,7 @@ const Configuration = ({ ...props }: React.ComponentProps<typeof Section>) => {
               {options.shorts.removeExplore.enabled && (
                 <Section>
                   <Switch
-                    label="Remove from Subscriptions"
+                    label="Remove from subscriptions"
                     checked={
                       options.shorts.removeExplore.removeFromSubscriptions
                     }
@@ -117,7 +117,7 @@ const Configuration = ({ ...props }: React.ComponentProps<typeof Section>) => {
                     />
                   </div>
                   <Switch
-                    label="Remove from Subscriptions"
+                    label="Remove from subscriptions"
                     checked={
                       options.videos.removeShortVideos.removeFromSubscriptions
                     }

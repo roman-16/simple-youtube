@@ -49,7 +49,7 @@ const shorts = {
     logger.log("Redirect from shorts to video");
   },
 
-  removeAccountTab: () => {
+  removeFromChannel: () => {
     const browseItem = document.querySelector(
       '#tabsContent yt-tab-shape[tab-title="Shorts"]',
     );
