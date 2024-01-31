@@ -73,15 +73,15 @@ const shorts = {
     )
       return;
 
-    const browseItem = document.querySelector(
-      "#contents > ytd-rich-section-renderer:has(*[is-slim-media])",
+    const shortsElements = document.querySelectorAll(
+      "ytd-rich-section-renderer:has(ytd-rich-shelf-renderer[is-shorts])",
     );
 
-    if (!browseItem) return;
+    shortsElements.forEach((element) => {
+      element.remove();
 
-    browseItem.remove();
-
-    logger.log("Removed shorts from explore");
+      logger.log("Removed shorts from explore");
+    });
   },
 
   removeNavigation: () => {

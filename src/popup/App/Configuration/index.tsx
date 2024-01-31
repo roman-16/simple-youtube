@@ -8,7 +8,7 @@ const Configuration = ({ ...props }: React.ComponentProps<typeof Section>) => {
   if (!options) return null;
 
   return (
-    <Section className="ml-0" {...props}>
+    <Section className="!ml-0" {...props}>
       <Switch
         label="Enabled"
         checked={options.enabled}
@@ -16,6 +16,20 @@ const Configuration = ({ ...props }: React.ComponentProps<typeof Section>) => {
       />
       {options.enabled && (
         <Section>
+          <Switch
+            label="Remove community posts"
+            checked={options.removeCommunityPosts}
+            onCheckedChange={(checked) =>
+              setOptions({ removeCommunityPosts: checked })
+            }
+          />
+          <Switch
+            label="Remove explore filter"
+            checked={options.removeExploreFilter}
+            onCheckedChange={(checked) =>
+              setOptions({ removeExploreFilter: checked })
+            }
+          />
           <Switch
             label="Shorts manipulation"
             checked={options.shorts.enabled}
@@ -84,6 +98,13 @@ const Configuration = ({ ...props }: React.ComponentProps<typeof Section>) => {
           />
           {options.videos.enabled && (
             <Section>
+              <Switch
+                label="Remove watch again"
+                checked={options.videos.removeWatchAgain}
+                onCheckedChange={(checked) =>
+                  setOptions({ videos: { removeWatchAgain: checked } })
+                }
+              />
               <Switch
                 label="Remove short videos"
                 checked={options.videos.removeShortVideos.enabled}
