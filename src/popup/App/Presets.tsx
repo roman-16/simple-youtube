@@ -1,12 +1,15 @@
 import { Button } from "@/popup/components";
 import { useOptionsStorage } from "@/popup/hooks";
 import { Options } from "@/shared";
+import { DeepPartial } from "utility-types";
 
-const presets: { name: string; options: Options }[] = [
+const presets: { name: string; options: DeepPartial<Options> }[] = [
   {
     name: "Recommended",
     options: {
       enabled: true,
+      removeCommunityPosts: true,
+      removeExploreFilter: true,
       shorts: {
         enabled: true,
         redirectToVideo: true,
@@ -21,11 +24,9 @@ const presets: { name: string; options: Options }[] = [
         enabled: true,
         removeShortVideos: {
           enabled: true,
-          hours: 0,
-          minutes: 1,
-          seconds: 0,
           removeFromSubscriptions: false,
         },
+        removeWatchAgain: true,
       },
     },
   },
@@ -33,6 +34,8 @@ const presets: { name: string; options: Options }[] = [
     name: "All",
     options: {
       enabled: true,
+      removeCommunityPosts: true,
+      removeExploreFilter: true,
       shorts: {
         enabled: true,
         redirectToVideo: true,
@@ -47,11 +50,35 @@ const presets: { name: string; options: Options }[] = [
         enabled: true,
         removeShortVideos: {
           enabled: true,
-          hours: 0,
-          minutes: 1,
-          seconds: 0,
           removeFromSubscriptions: true,
         },
+        removeWatchAgain: true,
+      },
+    },
+  },
+  {
+    name: "None",
+    options: {
+      enabled: false,
+      removeCommunityPosts: false,
+      removeExploreFilter: false,
+      shorts: {
+        enabled: false,
+        redirectToVideo: false,
+        removeFromChannel: false,
+        removeExplore: {
+          enabled: false,
+          removeFromSubscriptions: false,
+        },
+        removeNavigation: false,
+      },
+      videos: {
+        enabled: false,
+        removeShortVideos: {
+          enabled: false,
+          removeFromSubscriptions: false,
+        },
+        removeWatchAgain: false,
       },
     },
   },

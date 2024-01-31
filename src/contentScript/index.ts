@@ -1,6 +1,6 @@
 import { optionsStorage } from "@/shared";
 import _ from "lodash-es";
-import { shorts, videos } from "./modules";
+import { community, explore, shorts, videos } from "./modules";
 
 (async () => {
   const options = await optionsStorage.getAll();
@@ -8,6 +8,9 @@ import { shorts, videos } from "./modules";
   if (!options.enabled) return;
 
   const run = async () => {
+    if (options.removeCommunityPosts) community.removePosts();
+    if (options.removeExploreFilter) explore.removeFilter();
+
     if (options.shorts.enabled) {
       await shorts.init();
 
@@ -21,6 +24,7 @@ import { shorts, videos } from "./modules";
       await videos.init();
 
       if (options.videos.removeShortVideos.enabled) videos.removeShortVideos();
+      if (options.videos.removeWatchAgain) videos.removeWatchAgain();
     }
   };
 
