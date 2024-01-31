@@ -67,6 +67,18 @@ const videos = {
       logger.log("Removed short video");
     });
   },
+
+  removeWatchAgain: () => {
+    const shortsElements = document.querySelectorAll(
+      'ytd-rich-section-renderer:has(a[href^="/feed/history"])',
+    );
+
+    shortsElements.forEach((element) => {
+      element.remove();
+
+      logger.log("Removed watch again");
+    });
+  },
 };
 
 export default videos;

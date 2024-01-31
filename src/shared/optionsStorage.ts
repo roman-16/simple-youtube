@@ -4,6 +4,8 @@ import OptionsSync from "webext-options-sync";
 
 const defaults = {
   enabled: true,
+  removeCommunityPosts: true,
+  removeExploreFilter: true,
   shorts: {
     enabled: true,
     redirectToVideo: true,
@@ -23,6 +25,7 @@ const defaults = {
       seconds: 0,
       removeFromSubscriptions: false,
     },
+    removeWatchAgain: true,
   },
 };
 
