@@ -2,6 +2,8 @@ import logger from "@/contentScript/logger";
 
 const explore = {
   removeFilter: () => {
+    if (window.location.pathname !== "/") return;
+
     const shortsElements = document.querySelectorAll(
       "#header:has(iron-selector)",
     );
