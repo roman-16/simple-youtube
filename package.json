@@ -2,7 +2,7 @@
   "name": "simple-youtube",
   "description": "Simple YouTube is a lightweight extension that simplifies your YouTube experience by removing unnecessary clutter.",
   "private": true,
-  "version": "2.2.2",
+  "version": "2.2.3",
   "type": "module",
   "scripts": {
     "compile": "tsc --noEmit",
