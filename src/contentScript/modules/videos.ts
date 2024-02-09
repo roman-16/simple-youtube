@@ -25,8 +25,11 @@ const videos = {
     const path = window.location.pathname.toLowerCase();
 
     if (
-      !options?.videos.removeShortVideos.removeFromSubscriptions &&
-      path.startsWith("/feed/subscriptions")
+      (!options?.videos.removeShortVideos.removeFromSubscriptions &&
+        path.startsWith("/feed/subscriptions")) ||
+      document.querySelectorAll(
+        "tp-yt-app-header:not([disabled]):has(#channel-container)",
+      ).length >= 1
     )
       return;
 
