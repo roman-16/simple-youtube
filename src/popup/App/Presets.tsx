@@ -10,6 +10,7 @@ const presets: { name: string; options: DeepPartial<Options> }[] = [
       enabled: true,
       removeCommunityPosts: true,
       removeExploreFilter: true,
+      removeExploreMore: true,
       shorts: {
         enabled: true,
         redirectToVideo: true,
@@ -36,6 +37,7 @@ const presets: { name: string; options: DeepPartial<Options> }[] = [
       enabled: true,
       removeCommunityPosts: true,
       removeExploreFilter: true,
+      removeExploreMore: true,
       shorts: {
         enabled: true,
         redirectToVideo: true,
@@ -62,6 +64,7 @@ const presets: { name: string; options: DeepPartial<Options> }[] = [
       enabled: false,
       removeCommunityPosts: false,
       removeExploreFilter: false,
+      removeExploreMore: false,
       shorts: {
         enabled: false,
         redirectToVideo: false,

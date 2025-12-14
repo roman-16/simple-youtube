@@ -2,14 +2,14 @@
   "name": "simple-youtube",
   "description": "Simple YouTube is a lightweight extension that simplifies your YouTube experience by removing unnecessary clutter.",
   "private": true,
-  "version": "2.2.3",
+  "version": "2.3.0",
   "type": "module",
   "scripts": {
-    "compile": "tsc --noEmit",
-    "dev": "vite dev",
     "build": "rm -rf build/ dist/ && mkdir build/ && npm run build:chrome && npm run build:firefox",
     "build:chrome": "BROWSER=chrome vite build && cd dist/ && zip -r ../build/chrome-extension.zip * && cp manifest.json ../build/chrome-manifest.json && cd ..",
-    "build:firefox": "BROWSER=firefox vite build && cd dist/ && zip -r ../build/firefox-extension.zip * && cp manifest.json ../build/firefox-manifest.json && cd .."
+    "build:firefox": "BROWSER=firefox vite build && cd dist/ && zip -r ../build/firefox-extension.zip * && cp manifest.json ../build/firefox-manifest.json && cd ..",
+    "dev": "vite dev",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "classnames": "^2.5.1",
@@ -31,7 +31,7 @@
     "tailwindcss": "^3.4.1",
     "typescript": "^5.3.3",
     "vite": "^5.0.11",
-    "vite-plugin-web-extension": "^4.1.1",
+    "vite-plugin-web-extension": "^4.5.0",
     "vite-tsconfig-paths": "^4.3.1"
   }
 }

@@ -6,6 +6,7 @@ const defaults = {
   enabled: true,
   removeCommunityPosts: true,
   removeExploreFilter: true,
+  removeExploreMore: true,
   shorts: {
     enabled: true,
     redirectToVideo: true,
