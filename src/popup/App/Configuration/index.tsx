@@ -31,6 +31,13 @@ const Configuration = ({ ...props }: React.ComponentProps<typeof Section>) => {
             }
           />
           <Switch
+            label="Remove explore more"
+            checked={options.removeExploreMore}
+            onCheckedChange={(checked) =>
+              setOptions({ removeExploreMore: checked })
+            }
+          />
+          <Switch
             label="Shorts manipulation"
             checked={options.shorts.enabled}
             onCheckedChange={(checked) =>

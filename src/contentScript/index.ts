@@ -10,6 +10,7 @@ import { community, explore, shorts, videos } from "./modules";
   const run = async () => {
     if (options.removeCommunityPosts) community.removePosts();
     if (options.removeExploreFilter) explore.removeFilter();
+    if (options.removeExploreMore) explore.removeExploreMore();
 
     if (options.shorts.enabled) {
       await shorts.init();
