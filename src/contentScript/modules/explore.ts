@@ -17,7 +17,7 @@ const explore = {
     const header = document.querySelector("#frosted-glass") as HTMLDivElement | undefined;
 
     if (header) {
-      header.style.height = "unset"
+      header.style.height = "56px";
     }
   },
 
