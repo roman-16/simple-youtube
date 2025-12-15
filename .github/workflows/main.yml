@@ -34,10 +34,10 @@ jobs:
         with:
           name: extensions
           path: .
-      - uses: trmcnvn/chrome-addon@v2
+      - uses: mnao305/chrome-extension-upload@v5.0.0
         with:
-          extension: iecgbpoggpmlohjeojnjjihabobaaeek
-          zip: chrome-extension.zip
+          extension-id: iecgbpoggpmlohjeojnjjihabobaaeek
+          file-path: chrome-extension.zip
           client-id: ${{ secrets.CHROME_CLIENT_ID }}
           client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
           refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}
@@ -51,12 +51,9 @@ jobs:
         with:
           name: extensions
           path: .
-      - run: ls .
-        name: Firefox publish
-      - uses: trmcnvn/firefox-addon@v1
+      - uses: wdzeng/firefox-addon@v1
         with:
-          uuid: roman@lerchster.dev
-          xpi: firefox-extension.zip
-          manifest: firefox-manifest.json
-          api-key: ${{ secrets.FIREFOX_API_KEY }}
-          api-secret: ${{ secrets.FIREFOX_API_SECRET }}
+          addon-guid: roman@lerchster.dev
+          xpi-path: firefox-extension.zip
+          jwt-issuer: ${{ secrets.FIREFOX_API_KEY }}
+          jwt-secret: ${{ secrets.FIREFOX_API_SECRET }}
