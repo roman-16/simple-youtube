@@ -5,32 +5,24 @@
   "version": "2.3.2",
   "type": "module",
   "scripts": {
-    "build": "rm -rf build/ dist/ && mkdir build/ && npm run build:chrome && npm run build:firefox",
-    "build:chrome": "BROWSER=chrome vite build && cd dist/ && zip -r ../build/chrome-extension.zip * && cp manifest.json ../build/chrome-manifest.json && cd ..",
-    "build:firefox": "BROWSER=firefox vite build && cd dist/ && zip -r ../build/firefox-extension.zip * && cp manifest.json ../build/firefox-manifest.json && cd ..",
-    "dev": "vite dev",
-    "typecheck": "tsc --noEmit"
+    "build": "wxt build && wxt build -b firefox",
+    "dev": "wxt",
+    "postinstall": "wxt prepare",
+    "typecheck": "wxt prepare && tsc --noEmit",
+    "zip": "wxt zip && wxt zip -b firefox"
   },
   "dependencies": {
-    "classnames": "^2.5.1",
-    "date-fns": "^4.4.0",
-    "es-toolkit": "^1.48.1",
     "react": "^19.2.7",
-    "react-dom": "^19.2.7",
-    "react-use": "^17.6.1",
-    "utility-types": "^3.11.0",
-    "webext-options-sync": "^4.3.0"
+    "react-dom": "^19.2.7"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.0",
-    "@tailwindcss/postcss": "^4.3.1",
+    "@tailwindcss/vite": "^4.3.1",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.2",
-    "postcss": "^8.5.15",
+    "@wxt-dev/module-react": "^1.2.2",
     "tailwindcss": "^4.3.1",
     "typescript": "^6.0.3",
-    "vite": "^8.0.16",
-    "vite-plugin-web-extension": "^4.5.1"
+    "wxt": "^0.20.26"
   }
 }

@@ -1,0 +1,42 @@
+html[data-sy-community]
+  ytd-rich-section-renderer:has(ytd-rich-item-renderer[is-post]) {
+  display: none;
+}
+
+html[data-sy-explore-filter][data-sy-path="home"] #header:has(iron-selector) {
+  display: none;
+}
+
+html[data-sy-explore-filter][data-sy-path="home"] #frosted-glass {
+  height: 56px;
+}
+
+html[data-sy-explore-more][data-sy-path="home"]
+  ytd-rich-section-renderer:has(ytd-button-renderer[button-next]) {
+  display: none;
+}
+
+html[data-sy-shorts-channel] #tabsContent yt-tab-shape[tab-title="Shorts"] {
+  display: none;
+}
+
+html[data-sy-shorts-explore]:not([data-sy-path="subscriptions"])
+  ytd-rich-section-renderer:has(ytd-rich-shelf-renderer[is-shorts]) {
+  display: none;
+}
+
+html[data-sy-shorts-explore][data-sy-shorts-explore-subs]
+  ytd-rich-section-renderer:has(ytd-rich-shelf-renderer[is-shorts]) {
+  display: none;
+}
+
+html[data-sy-watch-again]
+  ytd-rich-section-renderer:has(a[href^="/feed/history"]) {
+  display: none;
+}
+
+.sy-hide-video,
+.sy-hide-nav {
+  /* biome-ignore lint/complexity/noImportantStyles: must override YouTube's inline/element styles on JS-hidden nodes */
+  display: none !important;
+}
