@@ -22,6 +22,7 @@ jobs:
         name: Build
       - uses: actions/upload-artifact@v7
         with:
+          include-hidden-files: true
           name: extensions
           path: .output/*.zip
 
