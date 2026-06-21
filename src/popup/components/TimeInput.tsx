@@ -1,5 +1,4 @@
-import _ from "lodash-es";
-import { Assign } from "utility-types";
+import type { Assign } from "utility-types";
 
 const parseNumber = (value: string, min = 0, max?: number) => {
   const number = Number(value);
@@ -35,13 +34,13 @@ const TimeInput = ({
   <div className="text-base" {...props}>
     <input
       className="w-[22px] text-right border rounded-none border-gray-400"
-      value={_.padStart(hours?.toString(), 2, "0")}
+      value={(hours?.toString() ?? "").padStart(2, "0")}
       onChange={(event) => onHoursChange?.(parseNumber(event.target.value, 0))}
     />
     :
     <input
       className="w-[22px] text-right border rounded-none border-gray-400"
-      value={_.padStart(minutes?.toString(), 2, "0")}
+      value={(minutes?.toString() ?? "").padStart(2, "0")}
       onChange={(event) =>
         onMinutesChange?.(parseNumber(event.target.value, 0, 59))
       }
@@ -49,7 +48,7 @@ const TimeInput = ({
     :
     <input
       className="w-[22px] border rounded-none border-gray-400"
-      value={_.padStart(seconds?.toString(), 2, "0")}
+      value={(seconds?.toString() ?? "").padStart(2, "0")}
       onChange={(event) =>
         onSecondsChange?.(parseNumber(event.target.value, 0, 59))
       }

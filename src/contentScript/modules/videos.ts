@@ -1,9 +1,9 @@
-import logger from "@/contentScript/logger";
-import { Options, optionsStorage } from "@/shared";
 import { add, isAfter } from "date-fns";
+import logger from "@/contentScript/logger";
+import { type Options, optionsStorage } from "@/shared";
 
 let isInitialized = false;
-let options: Options | undefined = undefined;
+let options: Options | undefined;
 let maxLength = new Date(0);
 
 const videos = {

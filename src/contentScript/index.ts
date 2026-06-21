@@ -1,5 +1,4 @@
 import { optionsStorage } from "@/shared";
-import _ from "lodash-es";
 import { community, explore, shorts, videos } from "./modules";
 
 (async () => {

@@ -14,7 +14,9 @@ const explore = {
       logger.log("Removed explore filter");
     });
 
-    const header = document.querySelector("#frosted-glass") as HTMLDivElement | undefined;
+    const header = document.querySelector("#frosted-glass") as
+      | HTMLDivElement
+      | undefined;
 
     if (header) {
       header.style.height = "56px";
