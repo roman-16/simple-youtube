@@ -1,0 +1,126 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release (e.g. 1.0.0)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+    steps:
+      - name: Validate version
+        run: |
+          if ! echo "${{ inputs.version }}" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?$'; then
+            echo "::error::Invalid version '${{ inputs.version }}'. Expected semver like 2.3.3 or 2.3.3-rc.1"
+            exit 1
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Check tag does not exist
+        run: |
+          if git rev-parse "v${{ inputs.version }}" >/dev/null 2>&1; then
+            echo "::error::Tag v${{ inputs.version }} already exists"
+            exit 1
+          fi
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+
+      - name: Bump version, commit and tag
+        id: tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          npm version "${{ inputs.version }}" --no-git-tag-version
+          git commit --all --message "chore(release): v${{ inputs.version }}"
+          git tag --annotate "v${{ inputs.version }}" --message "Release v${{ inputs.version }}"
+          git push origin HEAD --follow-tags
+          echo "tag=v${{ inputs.version }}" >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: prepare
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.prepare.outputs.tag }}
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+      - name: Install
+        run: npm ci
+      - name: Build
+        run: npm run zip
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: extensions
+          path: .output/*.zip
+          include-hidden-files: true
+          if-no-files-found: error
+
+  publish-chrome:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: extensions
+          path: .
+      - uses: mnao305/chrome-extension-upload@v6.0.0
+        with:
+          extension-id: iecgbpoggpmlohjeojnjjihabobaaeek
+          file-path: chrome-extension.zip
+          client-id: ${{ secrets.CHROME_CLIENT_ID }}
+          client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
+          refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}
+
+  publish-firefox:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: extensions
+          path: .
+      - uses: wdzeng/firefox-addon@v1
+        with:
+          addon-guid: roman@lerchster.dev
+          xpi-path: firefox-extension.zip
+          jwt-issuer: ${{ secrets.FIREFOX_API_KEY }}
+          jwt-secret: ${{ secrets.FIREFOX_API_SECRET }}
+
+  github-release:
+    needs: [prepare, build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: extensions
+          path: .
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ needs.prepare.outputs.tag }}" \
+            --repo "${{ github.repository }}" \
+            --title "${{ needs.prepare.outputs.tag }}" \
+            --generate-notes \
+            chrome-extension.zip firefox-extension.zip
