@@ -1,0 +1,52 @@
+const parseNumber = (value: string, min = 0, max?: number) => {
+  const number = Number(value);
+
+  if (Number.isNaN(number)) return min;
+  if (number < min) return min;
+  if (typeof max === "number" && number > max) return max;
+
+  return number;
+};
+
+type TimeInputProps = React.HTMLAttributes<HTMLElement> & {
+  hours?: number;
+  minutes?: number;
+  seconds?: number;
+  onHoursChange?: (hours: number) => void;
+  onMinutesChange?: (minutes: number) => void;
+  onSecondsChange?: (seconds: number) => void;
+};
+
+export const TimeInput = ({
+  hours,
+  minutes,
+  seconds,
+  onHoursChange,
+  onMinutesChange,
+  onSecondsChange,
+  ...props
+}: TimeInputProps) => (
+  <div className="text-base" {...props}>
+    <input
+      className="w-[22px] text-right border rounded-none border-gray-400"
+      value={(hours?.toString() ?? "").padStart(2, "0")}
+      onChange={(event) => onHoursChange?.(parseNumber(event.target.value, 0))}
+    />
+    :
+    <input
+      className="w-[22px] text-right border rounded-none border-gray-400"
+      value={(minutes?.toString() ?? "").padStart(2, "0")}
+      onChange={(event) =>
+        onMinutesChange?.(parseNumber(event.target.value, 0, 59))
+      }
+    />
+    :
+    <input
+      className="w-[22px] border rounded-none border-gray-400"
+      value={(seconds?.toString() ?? "").padStart(2, "0")}
+      onChange={(event) =>
+        onSecondsChange?.(parseNumber(event.target.value, 0, 59))
+      }
+    />
+  </div>
+);

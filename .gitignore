@@ -1,5 +1,3 @@
-build/
-chromiumDevelopment/
-dist/
-firefoxDevelopment/
+.output/
+.wxt/
 node_modules/

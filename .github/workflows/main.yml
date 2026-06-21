@@ -18,12 +18,12 @@ jobs:
           node-version: lts/*
       - run: npm ci
         name: Install
-      - run: npm run build
+      - run: npm run zip
         name: Build
       - uses: actions/upload-artifact@v7
         with:
           name: extensions
-          path: build/
+          path: .output/*.zip
 
   publish-chrome:
     name: Chrome publish
