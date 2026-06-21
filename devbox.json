@@ -1,7 +1,7 @@
 {
-  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.16.0/.schema/devbox.schema.json",
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.17.3/.schema/devbox.schema.json",
   "packages": [
-    "nodejs@22",
+    "nodejs@26",
     "npm-check-updates@latest"
   ]
 }

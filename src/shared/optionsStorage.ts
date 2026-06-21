@@ -1,5 +1,5 @@
-import _ from "lodash-es";
-import { DeepPartial } from "utility-types";
+import { mapValues, merge } from "es-toolkit/object";
+import type { DeepPartial } from "utility-types";
 import OptionsSync from "webext-options-sync";
 
 const defaults = {
@@ -33,7 +33,7 @@ const defaults = {
 type Options = typeof defaults;
 
 const optionsSync = new OptionsSync({
-  defaults: _.mapValues(defaults, (values) => JSON.stringify(values)),
+  defaults: mapValues(defaults, (values) => JSON.stringify(values)),
 });
 
 const optionsStorage = {
@@ -42,21 +42,17 @@ const optionsStorage = {
   getAll: async () => {
     const options = await optionsSync.getAll();
 
-    return _.mapValues(options, (values) => JSON.parse(values)) as Options;
+    return mapValues(options, (values) => JSON.parse(values)) as Options;
   },
 
   set: async (newOptions: DeepPartial<Options>) => {
     const options = await optionsStorage.getAll();
 
     return optionsSync.set(
-      _.mapValues(newOptions, (values, key: keyof Options) =>
-        JSON.stringify(
-          _.isObject(values) ? _.merge(options[key], values) : values,
-        ),
-      ),
+      mapValues(merge(options, newOptions), (values) => JSON.stringify(values)),
     );
   },
 };
 
 export default optionsStorage;
-export { type Options };
+export type { Options };

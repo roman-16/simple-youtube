@@ -1,8 +1,8 @@
 import logger from "@/contentScript/logger";
-import { Options, optionsStorage } from "@/shared";
+import { type Options, optionsStorage } from "@/shared";
 
 let isInitialized = false;
-let options: Options | undefined = undefined;
+let options: Options | undefined;
 let redirected = false;
 
 const navigation = {

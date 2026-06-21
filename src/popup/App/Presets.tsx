@@ -1,7 +1,7 @@
+import type { DeepPartial } from "utility-types";
 import { Button } from "@/popup/components";
 import { useOptionsStorage } from "@/popup/hooks";
-import { Options } from "@/shared";
-import { DeepPartial } from "utility-types";
+import type { Options } from "@/shared";
 
 const presets: { name: string; options: DeepPartial<Options> }[] = [
   {

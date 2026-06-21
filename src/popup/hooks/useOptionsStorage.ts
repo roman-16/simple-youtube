@@ -1,6 +1,6 @@
-import { Options, optionsStorage } from "@/shared";
 import { useCallback, useEffect } from "react";
 import { createGlobalState } from "react-use";
+import { type Options, optionsStorage } from "@/shared";
 
 const useGlobalState = createGlobalState<Options | undefined>(undefined);
 

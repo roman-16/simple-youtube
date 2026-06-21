@@ -1,4 +1,4 @@
-import { Assign } from "utility-types";
+import type { Assign } from "utility-types";
 
 type Props = Assign<
   React.HTMLAttributes<HTMLElement>,

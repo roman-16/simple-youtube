@@ -1,7 +1,6 @@
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import webExtension, { readJsonFile } from "vite-plugin-web-extension";
-import tsconfigPaths from "vite-tsconfig-paths";
 
 const generateManifest = () => {
   const manifest = readJsonFile("src/manifest.json");
@@ -15,9 +14,13 @@ const generateManifest = () => {
   };
 };
 
+const browser = process.env.BROWSER ?? "chrome";
+
 export default defineConfig({
+  resolve: {
+    tsconfigPaths: true,
+  },
   plugins: [
-    tsconfigPaths(),
     react(),
     webExtension({
       manifest: generateManifest,
@@ -28,8 +31,9 @@ export default defineConfig({
         keepProfileChanges: true,
         profileCreateIfMissing: true,
         startUrl: "https://youtube.com",
+        target: browser === "firefox" ? "firefox-desktop" : "chromium",
       },
-      browser: process.env.BROWSER ?? "chrome",
+      browser,
     }),
   ],
 });
