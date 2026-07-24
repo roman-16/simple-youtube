@@ -44,8 +44,8 @@ jobs:
       - name: Bump version, commit and tag
         id: tag
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "Roman"
+          git config user.email "roman@lerchster.dev"
           npm version "${{ inputs.version }}" --no-git-tag-version
           git commit --all --message "chore(release): v${{ inputs.version }}"
           git tag --annotate "v${{ inputs.version }}" --message "Release v${{ inputs.version }}"
