@@ -48,6 +48,7 @@ export const schema = section("Enabled", true, {
   removeCommunityPosts: bool("Remove community posts", true, "community"),
   removeExploreFilter: bool("Remove explore filter", true, "explore-filter"),
   removeExploreMore: bool("Remove explore more", true, "explore-more"),
+  removeFeedNudge: bool("Remove feed nudge", true, "feed-nudge"),
   shorts: section("Shorts manipulation", true, {
     redirectToVideo: bool("Redirect to video", true),
     removeFromChannel: bool("Remove from channel", true, "shorts-channel"),

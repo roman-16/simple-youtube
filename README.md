@@ -9,6 +9,7 @@ Every feature is individually toggleable. Defaults are listed below, and your se
 - **Remove community posts** from the home feed. (on)
 - **Remove explore filter** chips from the home feed. (on)
 - **Remove explore more** section from the home feed. (on)
+- **Remove feed nudge** from the home feed. (on)
 - **Shorts**
   - **Redirect to video**: rewrite `/shorts/<id>` URLs to the regular watch page `/watch?v=<id>`. (on)
   - **Remove from channel**: hide the Shorts tab on channel pages. (on)

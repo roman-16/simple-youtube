@@ -14,6 +14,7 @@ export const applyCssFlags = (options: Options) => {
   toggle("community", base && options.removeCommunityPosts);
   toggle("explore-filter", base && options.removeExploreFilter);
   toggle("explore-more", base && options.removeExploreMore);
+  toggle("feed-nudge", base && options.removeFeedNudge);
   toggle("shorts-channel", shorts && options.shorts.removeFromChannel);
   toggle("shorts-explore", explore);
   toggle(
