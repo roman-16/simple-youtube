@@ -36,15 +36,15 @@ Once installed, open YouTube and the extension applies your configuration automa
 
 ## Development
 
-Built with [WXT](https://wxt.dev), React, Tailwind CSS, and TypeScript. Requires Node.js 20.12+ (a [devbox](https://www.jetify.com/devbox) config is included for a reproducible toolchain).
+Built with [WXT](https://wxt.dev), React, Tailwind CSS, and TypeScript. Requires [Bun](https://bun.sh) (a [devbox](https://www.jetify.com/devbox) config is included for a reproducible toolchain).
 
 ```bash
 git clone https://github.com/roman-16/simple-youtube.git
 cd simple-youtube
-npm install
-npm run dev        # dev server with hot reload (Chromium; use `wxt -b firefox` for Firefox)
-npm run build      # production bundles for both browsers into .output/
-npm run zip        # packaged zips for both browsers
-npm run typecheck  # type-check
-npx biome check .  # format and lint checks
+bun install
+bun run dev        # dev server with hot reload (Chromium; use `wxt -b firefox` for Firefox)
+bun run build      # production bundles for both browsers into .output/
+bun run zip        # packaged zips for both browsers
+bun run typecheck  # type-check
+bunx biome check . # format and lint checks
 ```

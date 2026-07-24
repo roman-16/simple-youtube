@@ -1,7 +1,4 @@
 {
   "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.17.3/.schema/devbox.schema.json",
-  "packages": [
-    "nodejs@26",
-    "npm-check-updates@latest"
-  ]
+  "packages": ["bun@latest"]
 }
