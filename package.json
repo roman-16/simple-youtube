@@ -12,11 +12,11 @@
     "zip": "wxt zip && wxt zip -b firefox"
   },
   "dependencies": {
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7"
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.4",
+    "@biomejs/biome": "^2.5.5",
     "@tailwindcss/vite": "^4.3.3",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
