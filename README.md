@@ -45,6 +45,7 @@ bun install
 bun run dev        # dev server with hot reload (Chromium; use `wxt -b firefox` for Firefox)
 bun run build      # production bundles for both browsers into .output/
 bun run zip        # packaged zips for both browsers
+bun run test       # unit tests
 bun run typecheck  # type-check
 bunx biome check . # format and lint checks
 ```
