@@ -1,51 +1,42 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { Browser } from "wxt/browser";
+import { fakeBrowser } from "wxt/testing/fake-browser";
 import { ContentScriptContext } from "wxt/utils/content-script-context";
 import content from "@/entrypoints/content";
 import type { DeepPartial } from "@/options/merge";
 import { type Options, optionsStorage } from "@/options/storage";
+import type { Status } from "@/status";
+import { load } from "../../page";
 
-const feed = () => {
-  document.body.innerHTML = `
-    <ytd-rich-item-renderer id="short"><div id="length">0:30</div></ytd-rich-item-renderer>
-    <ytd-rich-item-renderer id="long"><div id="length">12:30</div></ytd-rich-item-renderer>
-    <ytd-mini-guide-renderer role="navigation">
-      <div id="items">
-        <ytd-mini-guide-entry-renderer><span class="title">Home</span></ytd-mini-guide-entry-renderer>
-        <ytd-mini-guide-entry-renderer id="shorts-entry"><span class="title">Shorts</span></ytd-mini-guide-entry-renderer>
-      </div>
-    </ytd-mini-guide-renderer>
-  `;
+const start = (options: DeepPartial<Options> = {}) => {
+  load("home-feed");
+
+  return optionsStorage
+    .set(options)
+    .then(() => content.main(new ContentScriptContext("test")));
 };
-
-const element = (id: string) => {
-  const found = document.getElementById(id);
-  if (!found) throw new Error(`missing ${id}`);
-
-  return found;
-};
-
-const hidden = (id: string, className: string) =>
-  vi.waitFor(() =>
-    expect(element(id).classList.contains(className)).toBe(true),
-  );
-
-const visible = (id: string, className: string) =>
-  vi.waitFor(() =>
-    expect(element(id).classList.contains(className)).toBe(false),
-  );
 
 const flag = (name: string) =>
   vi.waitFor(() =>
     expect(document.documentElement.getAttribute(`data-sy-${name}`)).toBe(""),
   );
 
-const start = (options: DeepPartial<Options> = {}) => {
-  vi.stubGlobal("location", { pathname: "/", replace: vi.fn() });
-  feed();
+const flags = () =>
+  document.documentElement
+    .getAttributeNames()
+    .filter((name) => name.startsWith("data-sy-"));
 
-  return optionsStorage
-    .set(options)
-    .then(() => content.main(new ContentScriptContext("test")));
+const hidden = () => document.querySelectorAll(".sy-hide-video");
+
+const status = async (): Promise<Status> => {
+  const respond = vi.fn();
+  fakeBrowser.runtime.onMessage.trigger(
+    { options: await optionsStorage.getAll(), type: "sy-status" },
+    {} as Browser.runtime.MessageSender,
+    respond,
+  );
+
+  return respond.mock.calls[0]?.[0];
 };
 
 describe("content script", () => {
@@ -68,51 +59,44 @@ describe("content script", () => {
         "home",
       ),
     );
-    await flag("community");
-    await flag("watch-again");
+    await flag("posts");
+    await flag("shelves");
   });
 
-  it("hides short videos and the shorts navigation entry", async () => {
+  it("hides the short videos of the feed", async () => {
     await start();
 
-    await hidden("short", "sy-hide-video");
-    await hidden("shorts-entry", "sy-hide-nav");
-    await visible("long", "sy-hide-video");
+    await vi.waitFor(() => expect(hidden()).toHaveLength(1));
+    expect(hidden()[0]?.textContent).toContain("0:28");
   });
 
-  it("reveals short videos once the feature is turned off", async () => {
+  it("hides a video that appears later", async () => {
     await start();
-    await hidden("short", "sy-hide-video");
+    await vi.waitFor(() => expect(hidden()).toHaveLength(1));
 
-    await optionsStorage.set({
-      videos: { removeShortVideos: { enabled: false } },
-    });
+    const item = document.createElement("ytd-rich-item-renderer");
+    item.innerHTML = `<yt-thumbnail-bottom-overlay-view-model><div class="ytBadgeShapeText">0:09</div></yt-thumbnail-bottom-overlay-view-model>`;
+    document.body.append(item);
 
-    await visible("short", "sy-hide-video");
+    await vi.waitFor(() => expect(hidden()).toHaveLength(2));
   });
 
-  it("restores the navigation once the feature is turned off", async () => {
+  it("reveals the videos once the feature is turned off", async () => {
     await start();
-    await hidden("shorts-entry", "sy-hide-nav");
+    await vi.waitFor(() => expect(hidden()).toHaveLength(1));
 
-    await optionsStorage.set({ shorts: { removeNavigation: false } });
+    await optionsStorage.set({ shortVideos: { enabled: false } });
 
-    await visible("shorts-entry", "sy-hide-nav");
+    await vi.waitFor(() => expect(hidden()).toHaveLength(0));
   });
 
   it("drops every flag once the extension is turned off", async () => {
     await start();
-    await flag("community");
+    await flag("posts");
 
     await optionsStorage.set({ enabled: false });
 
-    await vi.waitFor(() =>
-      expect(
-        document.documentElement
-          .getAttributeNames()
-          .filter((name) => name.startsWith("data-sy-")),
-      ).toEqual(["data-sy-path"]),
-    );
+    await vi.waitFor(() => expect(flags()).toEqual(["data-sy-path"]));
   });
 
   it("does nothing while disabled", async () => {
@@ -123,10 +107,21 @@ describe("content script", () => {
         "home",
       ),
     );
-    expect(element("short").classList.contains("sy-hide-video")).toBe(false);
-    expect(element("shorts-entry").classList.contains("sy-hide-nav")).toBe(
-      false,
-    );
+    expect(hidden()).toHaveLength(0);
+  });
+
+  it("reports what it hid", async () => {
+    await start();
+    await vi.waitFor(() => expect(hidden()).toHaveLength(1));
+
+    expect(await status()).toEqual({ filtered: true, hidden: 1, videos: 4 });
+  });
+
+  it("reports nothing for a page it leaves alone", async () => {
+    await start();
+    await optionsStorage.set({ shortVideos: { enabled: false } });
+
+    expect(await status()).toEqual({ filtered: false, hidden: 0, videos: 0 });
   });
 
   it("redirects a shorts page to the watch page", async () => {

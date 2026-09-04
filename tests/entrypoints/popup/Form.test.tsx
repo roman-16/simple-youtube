@@ -28,18 +28,18 @@ describe("Form", () => {
 
     for (const label of [
       "Enabled",
-      "Remove community posts",
-      "Remove explore filter",
-      "Remove explore more",
-      "Remove feed nudge",
-      "Shorts manipulation",
-      "Redirect to video",
-      "Remove from channel",
-      "Remove from explore",
-      "Remove from navigation",
-      "Video manipulation",
-      "Remove watch again",
-      "Remove short videos",
+      "Home feed",
+      "Remove posts",
+      "Remove shelves",
+      "Remove suggestion prompts",
+      "Remove topic chips",
+      "Short videos",
+      "Include subscriptions",
+      "Shorts",
+      "Redirect to the video page",
+      "Remove from feeds",
+      "Remove from the channel tabs",
+      "Remove from the sidebar",
     ])
       expect(screen.getAllByLabelText(label)).not.toHaveLength(0);
   });
@@ -47,15 +47,15 @@ describe("Form", () => {
   it("reports a toggled feature", () => {
     const update = form();
 
-    toggle("Remove feed nudge");
+    toggle("Remove shelves");
 
-    expect(update).toHaveBeenCalledWith({ removeFeedNudge: false });
+    expect(update).toHaveBeenCalledWith({ homeFeed: { removeShelves: false } });
   });
 
   it("reports a toggled section", () => {
     const update = form();
 
-    toggle("Shorts manipulation");
+    toggle("Shorts");
 
     expect(update).toHaveBeenCalledWith({ shorts: { enabled: false } });
   });
@@ -63,10 +63,20 @@ describe("Form", () => {
   it("reports a nested toggle", () => {
     const update = form();
 
-    toggle("Remove from subscriptions");
+    toggle("Include subscriptions", 1);
 
     expect(update).toHaveBeenCalledWith({
-      shorts: { removeExplore: { removeFromSubscriptions: true } },
+      shorts: { removeFromFeeds: { includeSubscriptions: true } },
+    });
+  });
+
+  it("keeps the two subscription toggles apart", () => {
+    const update = form();
+
+    toggle("Include subscriptions");
+
+    expect(update).toHaveBeenCalledWith({
+      shortVideos: { includeSubscriptions: true },
     });
   });
 
@@ -82,22 +92,18 @@ describe("Form", () => {
     form({ enabled: false });
 
     expect(screen.getAllByLabelText("Enabled")).toHaveLength(1);
-    expect(screen.queryByLabelText("Remove community posts")).toBeNull();
+    expect(screen.queryByLabelText("Remove posts")).toBeNull();
   });
 
   it("hides the children of a disabled section", () => {
     form({ shorts: { enabled: false } });
 
-    expect(screen.getByLabelText("Shorts manipulation")).toBeDefined();
-    expect(screen.queryByLabelText("Redirect to video")).toBeNull();
+    expect(screen.getByLabelText("Shorts")).toBeDefined();
+    expect(screen.queryByLabelText("Redirect to the video page")).toBeNull();
   });
 
   it("shows the configured maximum length", () => {
-    form({
-      videos: {
-        removeShortVideos: { maxLength: { hours: 1, minutes: 2, seconds: 3 } },
-      },
-    });
+    form({ shortVideos: { maxLength: { hours: 1, minutes: 2, seconds: 3 } } });
 
     expect(times().map((input) => input.value)).toEqual(["01", "02", "03"]);
   });
@@ -114,12 +120,12 @@ describe("Form", () => {
     fireEvent.change(input, { target: { value: "5" } });
 
     expect(update).toHaveBeenCalledWith({
-      videos: { removeShortVideos: { maxLength: { [unit]: 5 } } },
+      shortVideos: { maxLength: { [unit]: 5 } },
     });
   });
 
   it("hides the maximum length while short video removal is off", () => {
-    form({ videos: { removeShortVideos: { enabled: false } } });
+    form({ shortVideos: { enabled: false } });
 
     expect(times()).toHaveLength(0);
   });

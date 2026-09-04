@@ -1,157 +1,219 @@
-import { beforeEach, describe, expect, it } from "vitest";
-import { createShortVideoFilter } from "@/entrypoints/content/shortVideos";
+import { describe, expect, it } from "vitest";
+import {
+  hideShortVideos,
+  measureShortVideos,
+} from "@/entrypoints/content/shortVideos";
 import { defaults } from "@/options/defaults";
 import { type DeepPartial, deepMerge } from "@/options/merge";
 import type { Options } from "@/options/storage";
+import { load, targeted } from "../../page";
 
 const options = (patch: DeepPartial<Options> = {}) =>
   deepMerge(defaults, patch);
 
 const maxLength = (minutes: number, seconds = 0) =>
-  options({
-    videos: { removeShortVideos: { maxLength: { minutes, seconds } } },
+  options({ shortVideos: { maxLength: { minutes, seconds } } });
+
+const durations = (selector: string) =>
+  [...document.querySelectorAll(selector)]
+    .map((element) =>
+      element
+        .querySelector(
+          "yt-thumbnail-bottom-overlay-view-model .ytBadgeShapeText, ytd-thumbnail-overlay-time-status-renderer #text",
+        )
+        ?.textContent?.trim(),
+    )
+    .filter(Boolean);
+
+const hidden = () => durations(".sy-hide-video");
+
+describe("short videos", () => {
+  describe("the home feed", () => {
+    it("hides the videos below the maximum length", () => {
+      load("home-feed", { path: "home" });
+
+      expect(hideShortVideos(options())).toEqual({
+        filtered: true,
+        hidden: 1,
+        videos: 4,
+      });
+      expect(hidden()).toEqual(["0:28"]);
+    });
+
+    it("counts only the items that carry a duration", () => {
+      load("home-feed", { path: "home" });
+
+      expect(document.querySelectorAll("ytd-rich-item-renderer")).toHaveLength(
+        7,
+      );
+      expect(measureShortVideos(options())).toEqual({
+        filtered: true,
+        hidden: 1,
+        videos: 4,
+      });
+    });
+
+    it("follows a longer maximum length", () => {
+      load("home-feed", { path: "home" });
+
+      hideShortVideos(maxLength(20));
+
+      expect(hidden()).toEqual(["18:36", "0:28", "1:03"]);
+    });
+
+    it("follows a shorter maximum length", () => {
+      load("home-feed", { path: "home" });
+
+      hideShortVideos(maxLength(0, 10));
+
+      expect(hidden()).toEqual([]);
+    });
+
+    it("hides the grid cell so the row closes up", () => {
+      load("home-feed", { path: "home" });
+
+      hideShortVideos(options());
+
+      expect(
+        document.querySelector(".sy-hide-video")?.tagName.toLowerCase(),
+      ).toBe("ytd-rich-item-renderer");
+    });
+
+    it("marks the videos with a rule that hides them", () => {
+      load("home-feed", { path: "home" });
+
+      hideShortVideos(options());
+
+      expect(targeted()).toEqual([
+        'ytd-rich-item-renderer "0:28 Stealth Grey | Tesl"',
+      ]);
+    });
+
+    it("reveals the videos once the feature is off", () => {
+      load("home-feed", { path: "home" });
+      hideShortVideos(options());
+
+      expect(
+        hideShortVideos(options({ shortVideos: { enabled: false } })),
+      ).toEqual({ filtered: false, hidden: 0, videos: 0 });
+      expect(hidden()).toEqual([]);
+    });
+
+    it("reveals the videos once the extension is off", () => {
+      load("home-feed", { path: "home" });
+      hideShortVideos(options());
+
+      hideShortVideos(options({ enabled: false }));
+
+      expect(hidden()).toEqual([]);
+    });
+
+    it("settles on the same result when it runs again", () => {
+      load("home-feed", { path: "home" });
+
+      hideShortVideos(options());
+      hideShortVideos(options());
+
+      expect(hidden()).toEqual(["0:28"]);
+    });
   });
 
-const video = (badge: string, tag = "ytd-rich-item-renderer") => {
-  const container = document.createElement(tag);
-  container.innerHTML = `<div id="length">${badge}</div>`;
-  document.body.append(container);
+  describe("the watch page", () => {
+    it("hides a recommendation without a grid cell around it", () => {
+      load("watch-sidebar", { path: "watch" });
 
-  return container;
-};
+      hideShortVideos(maxLength(10));
 
-const overlayVideo = (badge: string) => {
-  const container = document.createElement("ytd-compact-video-renderer");
-  container.innerHTML = `<span id="text" class="ytd-thumbnail-overlay-time-status-renderer">${badge}</span>`;
-  document.body.append(container);
+      expect(
+        document.querySelector(".sy-hide-video")?.tagName.toLowerCase(),
+      ).toBe("yt-lockup-view-model");
+    });
 
-  return container;
-};
+    it("keeps the longer recommendations", () => {
+      load("watch-sidebar", { path: "watch" });
 
-const isHidden = (element: Element) =>
-  element.classList.contains("sy-hide-video");
+      expect(hideShortVideos(options())).toEqual({
+        filtered: true,
+        hidden: 0,
+        videos: 1,
+      });
+    });
+  });
 
-describe("createShortVideoFilter", () => {
-  let filter: ReturnType<typeof createShortVideoFilter>;
+  describe("search results", () => {
+    it("reads the duration but leaves the results in place", () => {
+      load("search-results", { path: "other" });
 
-  beforeEach(() => {
-    document.documentElement.setAttribute("data-sy-path", "home");
-    filter = createShortVideoFilter();
-    filter.update(options());
+      expect(hideShortVideos(maxLength(60))).toEqual({
+        filtered: false,
+        hidden: 0,
+        videos: 0,
+      });
+      expect(hidden()).toEqual([]);
+    });
+  });
+
+  describe("subscriptions", () => {
+    it("stays out of the way by default", () => {
+      load("home-feed", { path: "subscriptions" });
+
+      expect(hideShortVideos(options()).filtered).toBe(false);
+      expect(hidden()).toEqual([]);
+    });
+
+    it("filters on request", () => {
+      load("home-feed", { path: "subscriptions" });
+
+      hideShortVideos(options({ shortVideos: { includeSubscriptions: true } }));
+
+      expect(hidden()).toEqual(["0:28"]);
+    });
+  });
+
+  describe("channel pages", () => {
+    it("stays out of the way", () => {
+      load("home-feed", { path: "channel" });
+
+      expect(hideShortVideos(options()).filtered).toBe(false);
+      expect(hidden()).toEqual([]);
+    });
   });
 
   describe("durations", () => {
+    const badge = (text: string) => {
+      document.body.innerHTML = `
+        <ytd-rich-item-renderer>
+          <yt-thumbnail-bottom-overlay-view-model>
+            <div class="ytBadgeShapeText">${text}</div>
+          </yt-thumbnail-bottom-overlay-view-model>
+        </ytd-rich-item-renderer>`;
+      document.documentElement.setAttribute("data-sy-path", "home");
+
+      return hideShortVideos(options());
+    };
+
     it.each([
-      ["0:30", true],
-      ["1:00", true],
-      ["1:01", false],
-      ["10:00", false],
-      ["1:02:03", false],
-    ])("hides %s below a minute: %s", (badge, expected) => {
-      const container = video(badge);
-
-      filter.run();
-
-      expect(isHidden(container)).toBe(expected);
+      ["0:59", 1],
+      ["1:00", 1],
+      ["1:01", 0],
+      ["1:02:03", 0],
+    ])("reads %s", (text, expected) => {
+      expect(badge(text).hidden).toBe(expected);
     });
 
-    it("keeps videos without a numeric duration", () => {
-      const container = video("LIVE");
+    it.each(["LIVE", "Mix", "New", "", "12", "1:2:3"])(
+      "ignores the badge %s",
+      (text) => {
+        expect(badge(text)).toEqual({
+          filtered: true,
+          hidden: 0,
+          videos: 0,
+        });
+      },
+    );
 
-      filter.run();
-
-      expect(isHidden(container)).toBe(false);
-    });
-
-    it("keeps badges that wrap other elements", () => {
-      const container = video("<span>0:30</span>");
-
-      filter.run();
-
-      expect(isHidden(container)).toBe(false);
-    });
-
-    it("reads the thumbnail overlay badge", () => {
-      const container = overlayVideo("0:45");
-
-      filter.run();
-
-      expect(isHidden(container)).toBe(true);
-    });
-  });
-
-  describe("scope", () => {
-    it("leaves channel pages alone", () => {
-      document.documentElement.setAttribute("data-sy-path", "channel");
-      const container = video("0:30");
-
-      filter.run();
-
-      expect(isHidden(container)).toBe(false);
-    });
-
-    it("leaves subscriptions alone by default", () => {
-      document.documentElement.setAttribute("data-sy-path", "subscriptions");
-      const container = video("0:30");
-
-      filter.run();
-
-      expect(isHidden(container)).toBe(false);
-    });
-
-    it("filters subscriptions on request", () => {
-      document.documentElement.setAttribute("data-sy-path", "subscriptions");
-      filter.update(
-        options({
-          videos: { removeShortVideos: { removeFromSubscriptions: true } },
-        }),
-      );
-      const container = video("0:30");
-
-      filter.run();
-
-      expect(isHidden(container)).toBe(true);
-    });
-  });
-
-  describe("updates", () => {
-    it("skips badges it already measured", () => {
-      const container = video("0:30");
-      filter.run();
-
-      container.classList.remove("sy-hide-video");
-      filter.run();
-
-      expect(isHidden(container)).toBe(false);
-    });
-
-    it("re-measures every badge after a new maximum length", () => {
-      const container = video("2:00");
-      filter.run();
-
-      filter.update(maxLength(5));
-      filter.run();
-
-      expect(isHidden(container)).toBe(true);
-    });
-
-    it("reveals videos that are no longer too short", () => {
-      const container = video("0:30");
-      filter.run();
-
-      filter.update(maxLength(0, 10));
-      filter.run();
-
-      expect(isHidden(container)).toBe(false);
-    });
-
-    it("restores every hidden video", () => {
-      const container = video("0:30");
-      filter.run();
-
-      filter.unhide();
-
-      expect(isHidden(container)).toBe(false);
+    it("reads long durations", () => {
+      expect(badge("100:00:00").videos).toBe(1);
     });
   });
 });

@@ -24,18 +24,22 @@ describe("useOptions", () => {
     const { result } = renderHook(() => useOptions());
     await waitFor(() => expect(result.current[0]).toEqual(defaults));
 
-    await act(() => optionsStorage.set({ removeFeedNudge: false }));
+    await act(() => optionsStorage.set({ homeFeed: { removeShelves: false } }));
 
-    expect(result.current[0]?.removeFeedNudge).toBe(false);
+    expect(result.current[0]?.homeFeed.removeShelves).toBe(false);
   });
 
   it("persists updates", async () => {
     const { result } = renderHook(() => useOptions());
     await waitFor(() => expect(result.current[0]).toBeDefined());
 
-    await act(() => result.current[1]({ shorts: { removeNavigation: false } }));
+    await act(() =>
+      result.current[1]({ shorts: { removeFromSidebar: false } }),
+    );
 
-    expect((await optionsStorage.getAll()).shorts.removeNavigation).toBe(false);
+    expect((await optionsStorage.getAll()).shorts.removeFromSidebar).toBe(
+      false,
+    );
   });
 
   it("stops following changes once unmounted", async () => {

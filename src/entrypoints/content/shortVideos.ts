@@ -1,63 +1,89 @@
 import type { Options } from "@/options/storage";
+import type { Status } from "@/status";
 
 const HIDDEN = "sy-hide-video";
-const BADGES = "#length, #text.ytd-thumbnail-overlay-time-status-renderer";
-const CONTAINERS = "ytd-rich-item-renderer, ytd-compact-video-renderer";
 
-const parseSeconds = (text: string): number | null => {
-  const parts = text.split(":").map(Number);
-  if (parts.some(Number.isNaN)) return null;
+const BADGES = [
+  "yt-thumbnail-bottom-overlay-view-model .ytBadgeShapeText",
+  "ytd-thumbnail-overlay-time-status-renderer #text",
+].join(", ");
 
-  while (parts.length < 3) parts.unshift(0);
+const CELL = "ytd-rich-item-renderer";
 
-  const hours = parts[parts.length - 3] ?? 0;
-  const minutes = parts[parts.length - 2] ?? 0;
-  const seconds = parts[parts.length - 1] ?? 0;
+const ITEM = [
+  "yt-lockup-view-model",
+  "ytd-compact-video-renderer",
+  "ytd-grid-video-renderer",
+  "ytd-video-renderer",
+].join(", ");
+
+const DURATION = /^(?:(\d+):)?(\d{1,2}):(\d{2})$/;
+
+const FILTERED_PATHS = new Set(["home", "watch"]);
+
+type Found = { filtered: boolean; hidden: Set<Element>; videos: number };
+
+const toSeconds = (text: string): number | null => {
+  const match = DURATION.exec(text);
+  if (!match) return null;
+
+  const [, hours = "0", minutes = "0", seconds = "0"] = match;
+
+  return Number(hours) * 3600 + Number(minutes) * 60 + Number(seconds);
+};
+
+const limit = (options: Options): number => {
+  const { hours, minutes, seconds } = options.shortVideos.maxLength;
 
   return hours * 3600 + minutes * 60 + seconds;
 };
 
-export const createShortVideoFilter = () => {
-  let maxSeconds = 0;
-  let removeFromSubscriptions = false;
-  let generation = 0;
+const filters = (options: Options): boolean => {
+  if (!options.enabled || !options.shortVideos.enabled) return false;
 
-  const update = (options: Options) => {
-    const { maxLength, removeFromSubscriptions: subscriptions } =
-      options.videos.removeShortVideos;
+  const path = document.documentElement.getAttribute("data-sy-path");
+  if (path === "subscriptions") return options.shortVideos.includeSubscriptions;
 
-    maxSeconds =
-      maxLength.hours * 3600 + maxLength.minutes * 60 + maxLength.seconds;
-    removeFromSubscriptions = subscriptions;
-    generation += 1;
-  };
+  return FILTERED_PATHS.has(path ?? "");
+};
 
-  const unhide = () => {
-    for (const element of document.querySelectorAll(`.${HIDDEN}`))
-      element.classList.remove(HIDDEN);
-  };
+const find = (options: Options): Found => {
+  const hidden = new Set<Element>();
+  if (!filters(options)) return { filtered: false, hidden, videos: 0 };
 
-  const run = () => {
-    const path = document.documentElement.getAttribute("data-sy-path");
-    if (path === "channel") return;
-    if (path === "subscriptions" && !removeFromSubscriptions) return;
+  const max = limit(options);
+  let videos = 0;
 
-    for (const badge of document.querySelectorAll(BADGES)) {
-      if (badge.children.length > 0) continue;
+  for (const badge of document.querySelectorAll(BADGES)) {
+    const length = toSeconds(badge.textContent?.trim() ?? "");
+    if (length === null) continue;
 
-      const text = badge.textContent?.trim();
-      if (!text) continue;
+    const container = badge.closest(CELL) ?? badge.closest(ITEM);
+    if (!container) continue;
 
-      const key = `${generation}:${text}`;
-      if (badge.getAttribute("data-sy-dur") === key) continue;
-      badge.setAttribute("data-sy-dur", key);
+    videos += 1;
+    if (length <= max) hidden.add(container);
+  }
 
-      const seconds = parseSeconds(text);
-      badge
-        .closest(CONTAINERS)
-        ?.classList.toggle(HIDDEN, seconds !== null && seconds <= maxSeconds);
-    }
-  };
+  return { filtered: true, hidden, videos };
+};
 
-  return { update, unhide, run };
+const count = ({ filtered, hidden, videos }: Found): Status => ({
+  filtered,
+  hidden: hidden.size,
+  videos,
+});
+
+export const measureShortVideos = (options: Options): Status =>
+  count(find(options));
+
+export const hideShortVideos = (options: Options): Status => {
+  const found = find(options);
+
+  for (const element of document.querySelectorAll(`.${HIDDEN}`))
+    if (!found.hidden.has(element)) element.classList.remove(HIDDEN);
+
+  for (const element of found.hidden) element.classList.add(HIDDEN);
+
+  return count(found);
 };

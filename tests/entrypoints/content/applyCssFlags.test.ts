@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import { applyCssFlags } from "@/entrypoints/content/applyCssFlags";
 import { defaults } from "@/options/defaults";
 import { type DeepPartial, deepMerge } from "@/options/merge";
+import { presets } from "@/options/presets";
+import { type AnyNode, schema } from "@/options/schema";
 import type { Options } from "@/options/storage";
 
 const apply = (patch: DeepPartial<Options> = {}) =>
@@ -10,88 +12,104 @@ const apply = (patch: DeepPartial<Options> = {}) =>
 const flags = () =>
   document.documentElement
     .getAttributeNames()
-    .filter((name) => name.startsWith("data-sy-"))
+    .filter((name) => name.startsWith("data-sy-") && name !== "data-sy-path")
     .map((name) => name.slice("data-sy-".length))
     .sort();
+
+const declared = (node: AnyNode): string[] =>
+  node.kind === "time"
+    ? []
+    : [
+        ...(node.css ? [node.css] : []),
+        ...(node.kind === "section"
+          ? Object.values(node.children).flatMap(declared)
+          : []),
+      ];
+
+const RECOMMENDED = [
+  "posts",
+  "prompts",
+  "shelves",
+  "shorts-channel-tabs",
+  "shorts-feeds",
+  "shorts-sidebar",
+  "topic-chips",
+];
 
 describe("applyCssFlags", () => {
   it("marks the recommended features", () => {
     apply();
 
-    expect(flags()).toEqual([
-      "community",
-      "explore-filter",
-      "explore-more",
-      "feed-nudge",
-      "shorts-channel",
-      "shorts-explore",
-      "watch-again",
-    ]);
+    expect(flags()).toEqual(RECOMMENDED);
+  });
+
+  it("marks every flag the schema declares once everything is on", () => {
+    const all = presets.find((preset) => preset.name === "All")?.options ?? {};
+
+    apply(all);
+
+    expect(flags()).toEqual(declared(schema).sort());
   });
 
   it.each([
-    ["community", { removeCommunityPosts: false }],
-    ["explore-filter", { removeExploreFilter: false }],
-    ["explore-more", { removeExploreMore: false }],
-    ["feed-nudge", { removeFeedNudge: false }],
-    ["shorts-channel", { shorts: { removeFromChannel: false } }],
-    ["shorts-explore", { shorts: { removeExplore: { enabled: false } } }],
-    ["watch-again", { videos: { removeWatchAgain: false } }],
+    ["posts", { homeFeed: { removePosts: false } }],
+    ["prompts", { homeFeed: { removeSuggestionPrompts: false } }],
+    ["shelves", { homeFeed: { removeShelves: false } }],
+    ["shorts-channel-tabs", { shorts: { removeFromChannelTabs: false } }],
+    ["shorts-feeds", { shorts: { removeFromFeeds: { enabled: false } } }],
+    ["shorts-sidebar", { shorts: { removeFromSidebar: false } }],
+    ["topic-chips", { homeFeed: { removeTopicChips: false } }],
   ])(
     "drops %s when its feature is off",
     (flag, patch: DeepPartial<Options>) => {
       apply(patch);
 
-      expect(flags()).not.toContain(flag);
-      expect(flags()).toHaveLength(6);
+      expect(flags()).toEqual(RECOMMENDED.filter((other) => other !== flag));
     },
   );
 
-  it("marks nothing when the extension is off", () => {
+  it("marks nothing while the extension is off", () => {
     apply({ enabled: false });
 
     expect(flags()).toEqual([]);
   });
 
-  it("drops only shorts flags when shorts handling is off", () => {
+  it("drops the home feed flags when the section is off", () => {
+    apply({ homeFeed: { enabled: false } });
+
+    expect(flags()).toEqual([
+      "shorts-channel-tabs",
+      "shorts-feeds",
+      "shorts-sidebar",
+    ]);
+  });
+
+  it("drops the shorts flags when the section is off", () => {
     apply({ shorts: { enabled: false } });
 
-    expect(flags()).toEqual([
-      "community",
-      "explore-filter",
-      "explore-more",
-      "feed-nudge",
-      "watch-again",
-    ]);
+    expect(flags()).toEqual(["posts", "prompts", "shelves", "topic-chips"]);
   });
 
-  it("drops only video flags when video handling is off", () => {
-    apply({ videos: { enabled: false } });
+  it("extends the shorts removal to subscriptions on request", () => {
+    apply({ shorts: { removeFromFeeds: { includeSubscriptions: true } } });
 
-    expect(flags()).toEqual([
-      "community",
-      "explore-filter",
-      "explore-more",
-      "feed-nudge",
-      "shorts-channel",
-      "shorts-explore",
-    ]);
+    expect(flags()).toContain("shorts-feeds-subscriptions");
   });
 
-  it("extends the shorts shelf removal to subscriptions on request", () => {
-    apply({ shorts: { removeExplore: { removeFromSubscriptions: true } } });
-
-    expect(flags()).toContain("shorts-explore-subs");
-  });
-
-  it("keeps subscriptions untouched while the shelf removal is off", () => {
+  it("keeps subscriptions untouched while the removal is off", () => {
     apply({
       shorts: {
-        removeExplore: { enabled: false, removeFromSubscriptions: true },
+        removeFromFeeds: { enabled: false, includeSubscriptions: true },
       },
     });
 
-    expect(flags()).not.toContain("shorts-explore-subs");
+    expect(flags()).not.toContain("shorts-feeds-subscriptions");
+  });
+
+  it("marks no flag for the short video length", () => {
+    apply();
+
+    expect(flags()).not.toContain("short-videos");
   });
 
   it("clears flags that no longer apply", () => {

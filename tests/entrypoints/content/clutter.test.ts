@@ -1,53 +1,150 @@
-import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { applyCssFlags } from "@/entrypoints/content/applyCssFlags";
-import { defaults } from "@/options/defaults";
-import { deepMerge } from "@/options/merge";
-import { presets } from "@/options/presets";
-import { type AnyNode, schema } from "@/options/schema";
-import type { Options } from "@/options/storage";
+import { load, targeted } from "../../page";
 
-const css = readFileSync("src/entrypoints/content/clutter.css", "utf8");
-
-const styled = new Set(
-  [...css.matchAll(/\[data-sy-([a-z-]+)[=\]]/g)]
-    .map(([, flag]) => flag)
-    .filter((flag) => flag !== "path"),
-);
-
-const applied = () => {
-  const all = presets.find((preset) => preset.name === "All")?.options ?? {};
-  applyCssFlags(deepMerge(defaults, all) as Options);
-
-  return new Set(
-    document.documentElement
-      .getAttributeNames()
-      .filter((name) => name.startsWith("data-sy-"))
-      .map((name) => name.slice("data-sy-".length)),
-  );
-};
-
-const cssFlags = (node: AnyNode): string[] =>
-  node.kind === "time"
-    ? []
-    : [
-        ...(node.css ? [node.css] : []),
-        ...(node.kind === "section"
-          ? Object.values(node.children).flatMap(cssFlags)
-          : []),
-      ];
+const CHIPS = 'div#header "All Tesla Gaming"';
+const FROSTED = "div#frosted-glass";
+const PLAYABLES = 'ytd-rich-section-renderer "YouTube Playables Instan"';
+const SHORTS_ITEM = 'ytd-rich-item-renderer "Seeing if my violinist f"';
+const SHORTS_SHELF = 'ytd-rich-section-renderer "Shorts Seeing if my viol"';
 
 describe("clutter.css", () => {
-  it("styles every flag the content script sets", () => {
-    expect([...applied()].sort()).toEqual([...styled].sort());
+  describe("topic chips", () => {
+    it("removes the chip bar and shrinks the header behind it", () => {
+      load("home-feed", { flags: ["topic-chips"], path: "home" });
+
+      expect(targeted()).toEqual([FROSTED, CHIPS]);
+    });
+
+    it("keeps the chips outside the home feed", () => {
+      load("home-feed", { flags: ["topic-chips"], path: "watch" });
+
+      expect(targeted()).toEqual([]);
+    });
   });
 
-  it("styles every flag the schema declares", () => {
-    for (const flag of cssFlags(schema)) expect(styled).toContain(flag);
+  describe("shelves", () => {
+    it("removes every shelf from the home feed", () => {
+      load("home-feed", { flags: ["shelves"], path: "home" });
+
+      expect(targeted()).toEqual([SHORTS_SHELF, PLAYABLES]);
+    });
+
+    it("keeps the shelves that carry the subscriptions feed", () => {
+      load("home-feed", { flags: ["shelves"], path: "subscriptions" });
+
+      expect(targeted()).toEqual([]);
+    });
   });
 
-  it("hides the elements the content script marks", () => {
-    expect(css).toContain(".sy-hide-video");
-    expect(css).toContain(".sy-hide-nav");
+  describe("shorts in feeds", () => {
+    it("removes the shelf and its items from the home feed", () => {
+      load("home-feed", { flags: ["shorts-feeds"], path: "home" });
+
+      expect(targeted()).toEqual([SHORTS_ITEM, SHORTS_SHELF]);
+    });
+
+    it("removes the shelf from search results", () => {
+      load("search-results", { flags: ["shorts-feeds"], path: "other" });
+
+      expect(targeted()).toEqual([
+        'grid-shelf-view-model "Shorts ISSEI funny video"',
+      ]);
+    });
+
+    it("leaves channel pages alone", () => {
+      load("search-results", { flags: ["shorts-feeds"], path: "channel" });
+
+      expect(targeted()).toEqual([]);
+    });
+
+    it("leaves subscriptions alone by default", () => {
+      load("home-feed", { flags: ["shorts-feeds"], path: "subscriptions" });
+
+      expect(targeted()).toEqual([]);
+    });
+
+    it("reaches subscriptions on request", () => {
+      load("home-feed", {
+        flags: ["shorts-feeds", "shorts-feeds-subscriptions"],
+        path: "subscriptions",
+      });
+
+      expect(targeted()).toEqual([SHORTS_ITEM, SHORTS_SHELF]);
+    });
+  });
+
+  describe("shorts in the sidebar", () => {
+    it("removes the entry from the guide", () => {
+      load("guide", { flags: ["shorts-sidebar"], path: "home" });
+
+      expect(targeted()).toEqual(['ytd-guide-entry-renderer "Shorts"']);
+    });
+
+    it("removes the entry from the mini guide", () => {
+      load("mini-guide", { flags: ["shorts-sidebar"], path: "home" });
+
+      expect(targeted()).toEqual(['ytd-mini-guide-entry-renderer "Shorts"']);
+    });
+  });
+
+  describe("shorts on channels", () => {
+    it("removes the channel tab", () => {
+      load("channel-tabs", {
+        flags: ["shorts-channel-tabs"],
+        path: "channel",
+      });
+
+      expect(targeted()).toEqual(['yt-tab-shape "Shorts"']);
+    });
+  });
+
+  describe("videos", () => {
+    it("keeps every video in the home feed", () => {
+      load("home-feed", {
+        flags: [
+          "posts",
+          "prompts",
+          "shelves",
+          "shorts-channel-tabs",
+          "shorts-feeds",
+          "shorts-sidebar",
+          "topic-chips",
+        ],
+        path: "home",
+      });
+
+      expect(targeted()).toEqual([
+        FROSTED,
+        CHIPS,
+        SHORTS_ITEM,
+        SHORTS_SHELF,
+        PLAYABLES,
+      ]);
+    });
+
+    it("keeps the watch page recommendations", () => {
+      load("watch-sidebar", {
+        flags: [
+          "posts",
+          "prompts",
+          "shelves",
+          "shorts-channel-tabs",
+          "shorts-feeds",
+          "shorts-sidebar",
+          "topic-chips",
+        ],
+        path: "watch",
+      });
+
+      expect(targeted()).toEqual([]);
+    });
+  });
+
+  describe("without flags", () => {
+    it("leaves the page untouched", () => {
+      load("home-feed", { path: "home" });
+
+      expect(targeted()).toEqual([]);
+    });
   });
 });

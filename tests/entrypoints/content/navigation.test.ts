@@ -21,7 +21,7 @@ describe("setupNavigation", () => {
       ["/", "home"],
       ["/feed/subscriptions", "subscriptions"],
       ["/feed/history", "other"],
-      ["/shorts/abc", "shorts"],
+      ["/shorts/abc", "other"],
       ["/watch", "watch"],
       ["/@handle", "channel"],
       ["/channel/UC123", "channel"],
@@ -85,7 +85,7 @@ describe("setupNavigation", () => {
       expect(replace).not.toHaveBeenCalled();
     });
 
-    it.each(["/shorts", "/shorts/", "/watch", "/"])(
+    it.each(["/shorts", "/shorts/", "/shortsy/abc", "/watch", "/"])(
       "does nothing on %s",
       (pathname) => {
         const replace = stubLocation(pathname);

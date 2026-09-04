@@ -11,7 +11,6 @@ interface SectionNode<
   label: string;
   default: boolean;
   css?: string;
-  dynamic?: boolean;
   children: C;
 }
 
@@ -34,45 +33,46 @@ const section = <C extends Record<string, AnyNode>>(
   label: string,
   def: boolean,
   children: C,
-  opts: { css?: string; dynamic?: boolean } = {},
+  css?: string,
 ): SectionNode<C> => ({
   kind: "section",
   label,
   default: def,
   children,
-  css: opts.css,
-  dynamic: opts.dynamic,
+  css,
 });
 
 export const schema = section("Enabled", true, {
-  removeCommunityPosts: bool("Remove community posts", true, "community"),
-  removeExploreFilter: bool("Remove explore filter", true, "explore-filter"),
-  removeExploreMore: bool("Remove explore more", true, "explore-more"),
-  removeFeedNudge: bool("Remove feed nudge", true, "feed-nudge"),
-  shorts: section("Shorts manipulation", true, {
-    redirectToVideo: bool("Redirect to video", true),
-    removeFromChannel: bool("Remove from channel", true, "shorts-channel"),
-    removeExplore: section(
-      "Remove from explore",
-      true,
-      {
-        removeFromSubscriptions: bool("Remove from subscriptions", false),
-      },
-      { css: "shorts-explore" },
-    ),
-    removeNavigation: bool("Remove from navigation", true),
+  homeFeed: section("Home feed", true, {
+    removePosts: bool("Remove posts", true, "posts"),
+    removeShelves: bool("Remove shelves", true, "shelves"),
+    removeSuggestionPrompts: bool("Remove suggestion prompts", true, "prompts"),
+    removeTopicChips: bool("Remove topic chips", true, "topic-chips"),
   }),
-  videos: section("Video manipulation", true, {
-    removeWatchAgain: bool("Remove watch again", true, "watch-again"),
-    removeShortVideos: section(
-      "Remove short videos",
+  shortVideos: section("Short videos", true, {
+    maxLength: time("Maximum length", { hours: 0, minutes: 1, seconds: 0 }),
+    includeSubscriptions: bool("Include subscriptions", false),
+  }),
+  shorts: section("Shorts", true, {
+    redirectToVideo: bool("Redirect to the video page", true),
+    removeFromFeeds: section(
+      "Remove from feeds",
       true,
       {
-        maxLength: time("Max length", { hours: 0, minutes: 1, seconds: 0 }),
-        removeFromSubscriptions: bool("Remove from subscriptions", false),
+        includeSubscriptions: bool(
+          "Include subscriptions",
+          false,
+          "shorts-feeds-subscriptions",
+        ),
       },
-      { dynamic: true },
+      "shorts-feeds",
     ),
+    removeFromChannelTabs: bool(
+      "Remove from the channel tabs",
+      true,
+      "shorts-channel-tabs",
+    ),
+    removeFromSidebar: bool("Remove from the sidebar", true, "shorts-sidebar"),
   }),
 });
 

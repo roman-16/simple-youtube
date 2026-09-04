@@ -20,8 +20,8 @@ describe("optionsStorage", () => {
       const options = await optionsStorage.getAll();
 
       expect(options.shorts.redirectToVideo).toBe(false);
-      expect(options.shorts.removeFromChannel).toBe(true);
-      expect(options.videos).toEqual(defaults.videos);
+      expect(options.shorts.removeFromChannelTabs).toBe(true);
+      expect(options.homeFeed).toEqual(defaults.homeFeed);
     });
 
     it("falls back to the defaults for a non-object value", async () => {
@@ -39,15 +39,13 @@ describe("optionsStorage", () => {
     });
 
     it("accumulates successive patches", async () => {
-      await optionsStorage.set({ videos: { removeWatchAgain: false } });
-      await optionsStorage.set({
-        videos: { removeShortVideos: { maxLength: { minutes: 5 } } },
-      });
+      await optionsStorage.set({ homeFeed: { removeShelves: false } });
+      await optionsStorage.set({ shortVideos: { maxLength: { minutes: 5 } } });
 
       const options = await optionsStorage.getAll();
 
-      expect(options.videos.removeWatchAgain).toBe(false);
-      expect(options.videos.removeShortVideos.maxLength).toEqual({
+      expect(options.homeFeed.removeShelves).toBe(false);
+      expect(options.shortVideos.maxLength).toEqual({
         hours: 0,
         minutes: 5,
         seconds: 0,
@@ -60,11 +58,11 @@ describe("optionsStorage", () => {
       const listener = vi.fn();
       optionsStorage.watch(listener);
 
-      await optionsStorage.set({ removeFeedNudge: false });
+      await optionsStorage.set({ homeFeed: { removePosts: false } });
 
       expect(listener).toHaveBeenCalledWith({
         ...defaults,
-        removeFeedNudge: false,
+        homeFeed: { ...defaults.homeFeed, removePosts: false },
       });
     });
 

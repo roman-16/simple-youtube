@@ -10,13 +10,16 @@ describe("App", () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it("shows the presets and the feature tree", async () => {
+  it("shows the status, the presets and the feature tree", async () => {
     render(<App />);
 
     expect(
       await screen.findByRole("button", { name: "Recommended" }),
     ).toBeDefined();
-    expect(screen.getByLabelText("Remove community posts")).toBeDefined();
+    expect(
+      await screen.findByText("Open YouTube to see what is hidden"),
+    ).toBeDefined();
+    expect(screen.getByLabelText("Remove posts")).toBeDefined();
   });
 
   it("reflects the stored options", async () => {
@@ -24,17 +27,19 @@ describe("App", () => {
 
     render(<App />);
 
-    expect(await screen.findByLabelText("Shorts manipulation")).toBeDefined();
-    expect(screen.queryByLabelText("Redirect to video")).toBeNull();
+    expect(await screen.findByLabelText("Shorts")).toBeDefined();
+    expect(screen.queryByLabelText("Redirect to the video page")).toBeNull();
   });
 
   it("persists a toggled feature", async () => {
     render(<App />);
 
-    fireEvent.click(await screen.findByLabelText("Remove feed nudge"));
+    fireEvent.click(await screen.findByLabelText("Remove shelves"));
 
     await waitFor(async () =>
-      expect((await optionsStorage.getAll()).removeFeedNudge).toBe(false),
+      expect((await optionsStorage.getAll()).homeFeed.removeShelves).toBe(
+        false,
+      ),
     );
   });
 

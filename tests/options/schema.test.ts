@@ -15,22 +15,25 @@ describe("schema", () => {
 
   it("lists every feature", () => {
     expect(Object.keys(schema.children)).toEqual([
-      "removeCommunityPosts",
-      "removeExploreFilter",
-      "removeExploreMore",
-      "removeFeedNudge",
+      "homeFeed",
+      "shortVideos",
       "shorts",
-      "videos",
+    ]);
+    expect(Object.keys(schema.children.homeFeed.children)).toEqual([
+      "removePosts",
+      "removeShelves",
+      "removeSuggestionPrompts",
+      "removeTopicChips",
+    ]);
+    expect(Object.keys(schema.children.shortVideos.children)).toEqual([
+      "maxLength",
+      "includeSubscriptions",
     ]);
     expect(Object.keys(schema.children.shorts.children)).toEqual([
       "redirectToVideo",
-      "removeFromChannel",
-      "removeExplore",
-      "removeNavigation",
-    ]);
-    expect(Object.keys(schema.children.videos.children)).toEqual([
-      "removeWatchAgain",
-      "removeShortVideos",
+      "removeFromFeeds",
+      "removeFromChannelTabs",
+      "removeFromSidebar",
     ]);
   });
 
@@ -47,10 +50,19 @@ describe("schema", () => {
   });
 
   it("caps short videos at one minute by default", () => {
-    const maxLength =
-      schema.children.videos.children.removeShortVideos.children.maxLength;
+    const { maxLength } = schema.children.shortVideos.children;
 
     expect(maxLength.kind).toBe("time");
     expect(maxLength.default).toEqual({ hours: 0, minutes: 1, seconds: 0 });
+  });
+
+  it("keeps subscriptions out of both removals by default", () => {
+    expect(
+      schema.children.shortVideos.children.includeSubscriptions.default,
+    ).toBe(false);
+    expect(
+      schema.children.shorts.children.removeFromFeeds.children
+        .includeSubscriptions.default,
+    ).toBe(false);
   });
 });

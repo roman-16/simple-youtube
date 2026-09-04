@@ -5,7 +5,6 @@ const pathKind = (pathname: string): string => {
 
   if (path === "/") return "home";
   if (path.startsWith("/feed/subscriptions")) return "subscriptions";
-  if (path.startsWith("/shorts")) return "shorts";
   if (path.startsWith("/watch")) return "watch";
   if (
     path.startsWith("/@") ||
@@ -16,6 +15,12 @@ const pathKind = (pathname: string): string => {
     return "channel";
 
   return "other";
+};
+
+const shortsId = (pathname: string): string | undefined => {
+  const [, kind, id] = pathname.split("/");
+
+  return kind?.toLowerCase() === "shorts" ? id : undefined;
 };
 
 export const setupNavigation = (getOptions: () => Options | undefined) => {
@@ -33,10 +38,9 @@ export const setupNavigation = (getOptions: () => Options | undefined) => {
     )
       return;
 
-    const parts = pathname.split("/");
-    const id = parts[2];
+    const id = shortsId(pathname);
 
-    if (parts[1]?.toLowerCase().startsWith("shorts") && id && !redirected) {
+    if (id && !redirected) {
       redirected = true;
       window.location.replace(`/watch?v=${id}`);
     }

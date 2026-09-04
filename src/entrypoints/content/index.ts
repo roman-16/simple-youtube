@@ -1,11 +1,11 @@
 import { defineContentScript } from "#imports";
 import { type Options, optionsStorage } from "@/options/storage";
+import { provideStatus } from "@/status";
 import { applyCssFlags } from "./applyCssFlags";
 import "./clutter.css";
 import { setupNavigation } from "./navigation";
-import { createNavRemoval } from "./navRemoval";
 import { DomObserver } from "./observer";
-import { createShortVideoFilter } from "./shortVideos";
+import { hideShortVideos, measureShortVideos } from "./shortVideos";
 
 export default defineContentScript({
   matches: ["*://*.youtube.com/*"],
@@ -16,33 +16,19 @@ export default defineContentScript({
     let options: Options | undefined;
 
     const observer = new DomObserver();
-    const shortVideos = createShortVideoFilter();
-    const navRemoval = createNavRemoval();
     const navigation = setupNavigation(() => options);
+
+    provideStatus(measureShortVideos);
 
     const apply = (next: Options) => {
       options = next;
-      applyCssFlags(options);
+      applyCssFlags(next);
       navigation.update();
 
-      const filterShorts =
-        options.enabled &&
-        options.videos.enabled &&
-        options.videos.removeShortVideos.enabled;
-      const removeNavigation =
-        options.enabled &&
-        options.shorts.enabled &&
-        options.shorts.removeNavigation;
+      const hide = () => hideShortVideos(next);
+      hide();
 
-      if (filterShorts) shortVideos.update(options);
-      else shortVideos.unhide();
-
-      if (!removeNavigation) navRemoval.unhide();
-
-      observer.set([
-        ...(filterShorts ? [shortVideos.run] : []),
-        ...(removeNavigation ? [navRemoval.run] : []),
-      ]);
+      observer.set(next.enabled && next.shortVideos.enabled ? [hide] : []);
     };
 
     optionsStorage.getAll().then(apply);

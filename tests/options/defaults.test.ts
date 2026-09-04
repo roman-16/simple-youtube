@@ -6,33 +6,31 @@ describe("defaults", () => {
   it("mirrors the schema defaults", () => {
     expect(defaults).toEqual({
       enabled: true,
-      removeCommunityPosts: true,
-      removeExploreFilter: true,
-      removeExploreMore: true,
-      removeFeedNudge: true,
+      homeFeed: {
+        enabled: true,
+        removePosts: true,
+        removeShelves: true,
+        removeSuggestionPrompts: true,
+        removeTopicChips: true,
+      },
+      shortVideos: {
+        enabled: true,
+        includeSubscriptions: false,
+        maxLength: { hours: 0, minutes: 1, seconds: 0 },
+      },
       shorts: {
         enabled: true,
         redirectToVideo: true,
-        removeFromChannel: true,
-        removeExplore: { enabled: true, removeFromSubscriptions: false },
-        removeNavigation: true,
-      },
-      videos: {
-        enabled: true,
-        removeWatchAgain: true,
-        removeShortVideos: {
-          enabled: true,
-          maxLength: { hours: 0, minutes: 1, seconds: 0 },
-          removeFromSubscriptions: false,
-        },
+        removeFromChannelTabs: true,
+        removeFromFeeds: { enabled: true, includeSubscriptions: false },
+        removeFromSidebar: true,
       },
     });
   });
 
   it("clones time values so the schema stays pristine", () => {
-    expect(defaults.videos.removeShortVideos.maxLength).not.toBe(
-      schema.children.videos.children.removeShortVideos.children.maxLength
-        .default,
+    expect(defaults.shortVideos.maxLength).not.toBe(
+      schema.children.shortVideos.children.maxLength.default,
     );
   });
 });

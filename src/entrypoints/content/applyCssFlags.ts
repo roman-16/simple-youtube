@@ -1,25 +1,48 @@
+import { type AnyNode, schema } from "@/options/schema";
 import type { Options } from "@/options/storage";
 
-const toggle = (name: string, on: boolean) => {
-  if (on) document.documentElement.setAttribute(`data-sy-${name}`, "");
-  else document.documentElement.removeAttribute(`data-sy-${name}`);
+const PREFIX = "data-sy-";
+const PATH = `${PREFIX}path`;
+
+const collect = (
+  node: AnyNode,
+  value: unknown,
+  enabled: boolean,
+  flags: Set<string>,
+) => {
+  if (node.kind === "time") return;
+
+  const on =
+    enabled &&
+    (node.kind === "bool"
+      ? value === true
+      : (value as { enabled: boolean }).enabled);
+
+  if (on && node.css) flags.add(node.css);
+  if (node.kind !== "section") return;
+
+  for (const [key, child] of Object.entries(node.children))
+    collect(child, (value as Record<string, unknown>)[key], on, flags);
+};
+
+export const cssFlags = (options: Options): Set<string> => {
+  const flags = new Set<string>();
+  collect(schema, options, true, flags);
+
+  return flags;
 };
 
 export const applyCssFlags = (options: Options) => {
-  const base = options.enabled;
-  const shorts = base && options.shorts.enabled;
-  const videos = base && options.videos.enabled;
-  const explore = shorts && options.shorts.removeExplore.enabled;
+  const flags = cssFlags(options);
+  const root = document.documentElement;
 
-  toggle("community", base && options.removeCommunityPosts);
-  toggle("explore-filter", base && options.removeExploreFilter);
-  toggle("explore-more", base && options.removeExploreMore);
-  toggle("feed-nudge", base && options.removeFeedNudge);
-  toggle("shorts-channel", shorts && options.shorts.removeFromChannel);
-  toggle("shorts-explore", explore);
-  toggle(
-    "shorts-explore-subs",
-    explore && options.shorts.removeExplore.removeFromSubscriptions,
-  );
-  toggle("watch-again", videos && options.videos.removeWatchAgain);
+  for (const name of root.getAttributeNames())
+    if (
+      name.startsWith(PREFIX) &&
+      name !== PATH &&
+      !flags.has(name.slice(PREFIX.length))
+    )
+      root.removeAttribute(name);
+
+  for (const flag of flags) root.setAttribute(`${PREFIX}${flag}`, "");
 };
