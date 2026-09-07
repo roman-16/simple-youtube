@@ -69,7 +69,7 @@ export const schema = section("Enabled", true, {
     ),
     removeFromChannelTabs: bool(
       "Remove from the channel tabs",
-      true,
+      false,
       "shorts-channel-tabs",
     ),
     removeFromSidebar: bool("Remove from the sidebar", true, "shorts-sidebar"),

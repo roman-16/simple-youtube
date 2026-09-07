@@ -15,7 +15,7 @@ Every feature is individually toggleable. Defaults are listed below, and your se
 - **Shorts**
   - **Redirect to the video page**: rewrite `/shorts/<id>` URLs to `/watch?v=<id>`. (on)
   - **Remove from feeds**: hide Shorts shelves and Shorts items in the home feed and in search results, optionally including the Subscriptions feed (off by default). (on)
-  - **Remove from the channel tabs**: hide the Shorts tab on channel pages. (on)
+  - **Remove from the channel tabs**: hide the Shorts tab on channel pages. (off)
   - **Remove from the sidebar**: hide Shorts in the sidebar and mini guide. (on)
 
 The popup opens with a line reporting what the extension is doing on the page you have open, for example `On this page: 7 of 21 videos hidden`.

@@ -30,7 +30,6 @@ const RECOMMENDED = [
   "posts",
   "prompts",
   "shelves",
-  "shorts-channel-tabs",
   "shorts-feeds",
   "shorts-sidebar",
   "topic-chips",
@@ -55,7 +54,6 @@ describe("applyCssFlags", () => {
     ["posts", { homeFeed: { removePosts: false } }],
     ["prompts", { homeFeed: { removeSuggestionPrompts: false } }],
     ["shelves", { homeFeed: { removeShelves: false } }],
-    ["shorts-channel-tabs", { shorts: { removeFromChannelTabs: false } }],
     ["shorts-feeds", { shorts: { removeFromFeeds: { enabled: false } } }],
     ["shorts-sidebar", { shorts: { removeFromSidebar: false } }],
     ["topic-chips", { homeFeed: { removeTopicChips: false } }],
@@ -77,17 +75,25 @@ describe("applyCssFlags", () => {
   it("drops the home feed flags when the section is off", () => {
     apply({ homeFeed: { enabled: false } });
 
-    expect(flags()).toEqual([
-      "shorts-channel-tabs",
-      "shorts-feeds",
-      "shorts-sidebar",
-    ]);
+    expect(flags()).toEqual(["shorts-feeds", "shorts-sidebar"]);
   });
 
   it("drops the shorts flags when the section is off", () => {
     apply({ shorts: { enabled: false } });
 
     expect(flags()).toEqual(["posts", "prompts", "shelves", "topic-chips"]);
+  });
+
+  it("removes the shorts channel tab on request", () => {
+    apply({ shorts: { removeFromChannelTabs: true } });
+
+    expect(flags()).toContain("shorts-channel-tabs");
+  });
+
+  it("keeps the channel tab untouched while the shorts section is off", () => {
+    apply({ shorts: { enabled: false, removeFromChannelTabs: true } });
+
+    expect(flags()).not.toContain("shorts-channel-tabs");
   });
 
   it("extends the shorts removal to subscriptions on request", () => {

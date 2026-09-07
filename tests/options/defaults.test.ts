@@ -21,7 +21,7 @@ describe("defaults", () => {
       shorts: {
         enabled: true,
         redirectToVideo: true,
-        removeFromChannelTabs: true,
+        removeFromChannelTabs: false,
         removeFromFeeds: { enabled: true, includeSubscriptions: false },
         removeFromSidebar: true,
       },

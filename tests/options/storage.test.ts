@@ -20,7 +20,7 @@ describe("optionsStorage", () => {
       const options = await optionsStorage.getAll();
 
       expect(options.shorts.redirectToVideo).toBe(false);
-      expect(options.shorts.removeFromChannelTabs).toBe(true);
+      expect(options.shorts.removeFromSidebar).toBe(true);
       expect(options.homeFeed).toEqual(defaults.homeFeed);
     });
 
