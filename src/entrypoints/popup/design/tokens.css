@@ -1,0 +1,57 @@
+@font-face {
+  font-display: swap;
+  font-family: "Geist";
+  font-style: normal;
+  font-weight: 100 900;
+  src: url("@fontsource-variable/geist/files/geist-latin-wght-normal.woff2") format("woff2");
+}
+
+:root {
+  color-scheme: light dark;
+  --sans: "Geist", system-ui, sans-serif;
+  --base00: #121314;
+  --base01: #191A1B;
+  --base02: #242526;
+  --base03: #8B949E;
+  --base04: #A0A0A0;
+  --base05: #BFBFBF;
+  --base06: #C9D1D9;
+  --base07: #EDEDED;
+  --base08: #FF7B72;
+  --base09: #FFA657;
+  --base0A: #E5BA7D;
+  --base0B: #7EE787;
+  --base0C: #56B6C2;
+  --base0D: #297AA0;
+  --base0E: #D2A8FF;
+  --base0F: #C4805A;
+  --accent: #4694BB;
+  --on-accent: #FFFFFF;
+  --pressed: #2F3031;
+  --raised: #161718;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --base00: #F9FAFC;
+    --base01: #FFFFFF;
+    --base02: #EFF0F2;
+    --base03: #6C6D6F;
+    --base04: #5E5F60;
+    --base05: #3F4041;
+    --base06: #2C2D2E;
+    --base07: #1A1B1C;
+    --base08: #C0413D;
+    --base09: #A45B00;
+    --base0A: #8D6628;
+    --base0B: #0C7F28;
+    --base0C: #107984;
+    --base0D: #21749A;
+    --base0E: #835AAB;
+    --base0F: #9D5C37;
+    --accent: #21749A;
+    --on-accent: #FFFFFF;
+    --pressed: #E5E6E8;
+    --raised: #F3F4F6;
+  }
+}

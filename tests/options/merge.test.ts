@@ -1,5 +1,48 @@
 import { describe, expect, it } from "vitest";
-import { deepMerge } from "@/options/merge";
+import { deepEqual, deepMerge } from "@/options/merge";
+
+describe("deepEqual", () => {
+  it("tells equal values", () => {
+    expect(deepEqual(1, 1)).toBe(true);
+    expect(deepEqual("a", "a")).toBe(true);
+  });
+
+  it("tells different values", () => {
+    expect(deepEqual(1, 2)).toBe(false);
+    expect(deepEqual(1, "1")).toBe(false);
+  });
+
+  it("compares nested objects by their content", () => {
+    expect(
+      deepEqual(
+        { enabled: true, shorts: { redirect: true } },
+        { enabled: true, shorts: { redirect: true } },
+      ),
+    ).toBe(true);
+  });
+
+  it("ignores the order of the keys", () => {
+    expect(deepEqual({ a: 1, b: 2 }, { b: 2, a: 1 })).toBe(true);
+  });
+
+  it("tells a nested difference", () => {
+    expect(
+      deepEqual(
+        { shorts: { redirect: true } },
+        { shorts: { redirect: false } },
+      ),
+    ).toBe(false);
+  });
+
+  it("tells a missing key from an undefined one", () => {
+    expect(deepEqual({ a: undefined }, { b: undefined })).toBe(false);
+    expect(deepEqual({ a: 1 }, { a: 1, b: 2 })).toBe(false);
+  });
+
+  it("tells an object from a primitive", () => {
+    expect(deepEqual({ a: 1 }, 1)).toBe(false);
+  });
+});
 
 describe("deepMerge", () => {
   it("keeps base keys the patch omits", () => {

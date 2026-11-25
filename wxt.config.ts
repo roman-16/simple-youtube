@@ -1,4 +1,3 @@
-import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "wxt";
 
 export default defineConfig({
@@ -6,9 +5,6 @@ export default defineConfig({
   publicDir: "src/public",
   manifestVersion: 3,
   modules: ["@wxt-dev/module-react"],
-  vite: () => ({
-    plugins: [tailwindcss()],
-  }),
   manifest: {
     name: "Simple YouTube",
     permissions: ["storage"],

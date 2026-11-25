@@ -1,7 +1,6 @@
-import { Divider } from "./components";
-import { Form } from "./Form";
+import { Switch } from "./components";
+import { Groups } from "./Groups";
 import { Presets } from "./Presets";
-import { Status } from "./Status";
 import { useOptions } from "./useOptions";
 
 export const App = () => {
@@ -10,12 +9,21 @@ export const App = () => {
   if (!options) return null;
 
   return (
-    <div className="min-w-80 m-4 text-base">
-      <Status options={options} />
-      <Divider className="my-4" />
-      <Presets update={update} />
-      <Divider className="my-4" />
-      <Form options={options} update={update} />
-    </div>
+    <main className="popup">
+      <header className="top-bar">
+        <span className="brand">
+          <img className="brand-icon" src="/icons/48.png" alt="" />
+          <h1 className="brand-name">Simple YouTube</h1>
+        </span>
+        <span className="spacer" />
+        <Presets options={options} update={update} />
+        <Switch
+          aria-label="Enabled"
+          checked={options.enabled}
+          onCheckedChange={(enabled) => update({ enabled })}
+        />
+      </header>
+      <Groups options={options} update={update} />
+    </main>
   );
 };

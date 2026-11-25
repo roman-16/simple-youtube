@@ -1,0 +1,98 @@
+:root {
+  --gutter: 12px;
+  --top-bar: 46px;
+}
+
+@media (pointer: fine) {
+  html {
+    width: 360px;
+  }
+}
+
+.popup {
+  display: grid;
+  gap: 8px;
+  padding: 0 var(--gutter) var(--gutter);
+}
+
+.top-bar {
+  gap: 10px;
+}
+
+.menu {
+  top: calc(var(--top) + var(--top-bar) - 4px);
+  right: var(--gutter);
+}
+
+.snackbars {
+  top: auto;
+  bottom: calc(var(--bottom) + var(--gutter));
+}
+
+.group {
+  padding: 4px 14px;
+}
+
+.group-name {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  min-height: 52px;
+  border-radius: var(--radius-s);
+  text-align: left;
+}
+
+.group-name svg.icon {
+  width: 14px;
+  height: 14px;
+  transition: transform var(--fast);
+}
+
+.group-name[aria-expanded="true"] svg.icon {
+  transform: rotate(90deg);
+}
+
+.group-name .list-text {
+  gap: 0;
+}
+
+.list > li > .switch:has(.switch-label) {
+  display: flex;
+  flex: 1;
+  flex-direction: row-reverse;
+  align-self: stretch;
+  justify-content: space-between;
+}
+
+.list > li.nested {
+  padding-left: 16px;
+  border-top: 0;
+}
+
+.list > li.length {
+  flex-wrap: wrap;
+  gap: 0;
+}
+
+.length > label {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  min-height: inherit;
+}
+
+.length .field {
+  text-align: right;
+}
+
+.length .problem {
+  flex-basis: 100%;
+  margin: 2px 0 8px;
+}
+
+.inactive {
+  opacity: 0.38;
+}

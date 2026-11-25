@@ -43,7 +43,7 @@ describe("applyCssFlags", () => {
   });
 
   it("marks every flag the schema declares once everything is on", () => {
-    const all = presets.find((preset) => preset.name === "All")?.options ?? {};
+    const all = presets.find((preset) => preset.id === "all")?.options ?? {};
 
     apply(all);
 

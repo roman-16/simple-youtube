@@ -14,8 +14,25 @@ function setAll(node: SectionNode, value: boolean): Record<string, unknown> {
   return result;
 }
 
-export const presets: { name: string; options: DeepPartial<Options> }[] = [
-  { name: "Recommended", options: defaults },
-  { name: "All", options: setAll(schema, true) as DeepPartial<Options> },
-  { name: "None", options: setAll(schema, false) as DeepPartial<Options> },
-];
+export const presets = [
+  {
+    id: "recommended",
+    label: "Reset to recommended",
+    options: defaults as DeepPartial<Options>,
+    receipt: "Reset to recommended",
+  },
+  {
+    id: "all",
+    label: "Turn everything on",
+    options: setAll(schema, true) as DeepPartial<Options>,
+    receipt: "Everything turned on",
+  },
+  {
+    id: "none",
+    label: "Turn everything off",
+    options: setAll(schema, false) as DeepPartial<Options>,
+    receipt: "Everything turned off",
+  },
+] as const;
+
+export type Preset = (typeof presets)[number];

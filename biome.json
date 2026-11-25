@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.5.5/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.6.9/schema.json",
   "files": {
     "includes": [
       "**",
@@ -7,6 +7,7 @@
       "!.output",
       "!.wxt",
       "!node_modules",
+      "!src/entrypoints/popup/design",
       "!src/public",
       "!tests/fixtures"
     ]

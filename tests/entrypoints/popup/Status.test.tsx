@@ -21,12 +21,12 @@ const answer = async (status: Value | Error) => {
 };
 
 describe("Status", () => {
-  it("says nothing until the page answers", async () => {
+  it("holds its line until the page answers", async () => {
     await answer({ filtered: true, hidden: 7, videos: 21 });
 
     const { container } = render(<Status options={defaults} />);
 
-    expect(container.textContent).toBe("");
+    expect(container.textContent).toBe("\u00a0");
     expect(await screen.findByText(/videos hidden/)).toBeDefined();
   });
 
@@ -55,9 +55,7 @@ describe("Status", () => {
 
     render(<Status options={defaults} />);
 
-    expect(
-      await screen.findByText("Short videos are not filtered on this page"),
-    ).toBeDefined();
+    expect(await screen.findByText("Not filtered on this page")).toBeDefined();
   });
 
   it("asks for youtube when the page cannot answer", async () => {

@@ -6,7 +6,7 @@ const checkbox = () => screen.getByRole<HTMLInputElement>("checkbox");
 
 describe("Switch", () => {
   it("reflects the checked state", () => {
-    render(<Switch label="Remove feed nudge" checked />);
+    render(<Switch label="Remove posts" checked onCheckedChange={vi.fn()} />);
 
     expect(checkbox().checked).toBe(true);
   });
@@ -14,7 +14,11 @@ describe("Switch", () => {
   it("reports the next state when clicked", () => {
     const onCheckedChange = vi.fn();
     render(
-      <Switch label="Remove feed nudge" onCheckedChange={onCheckedChange} />,
+      <Switch
+        label="Remove posts"
+        checked={false}
+        onCheckedChange={onCheckedChange}
+      />,
     );
 
     fireEvent.click(checkbox());
@@ -22,15 +26,30 @@ describe("Switch", () => {
     expect(onCheckedChange).toHaveBeenCalledWith(true);
   });
 
-  it("labels the checkbox", () => {
-    render(<Switch label="Remove feed nudge" checked />);
+  it("shows its label and takes its name from it", () => {
+    render(<Switch label="Remove posts" checked onCheckedChange={vi.fn()} />);
 
-    expect(screen.getByLabelText("Remove feed nudge")).toBe(checkbox());
+    expect(screen.getByText("Remove posts")).toBeDefined();
+    expect(screen.getByLabelText("Remove posts")).toBe(checkbox());
   });
 
-  it("renders without a label", () => {
-    render(<Switch checked={false} />);
+  it("takes a name without showing one", () => {
+    render(<Switch aria-label="Enabled" checked onCheckedChange={vi.fn()} />);
 
-    expect(checkbox().checked).toBe(false);
+    expect(screen.getByLabelText("Enabled")).toBe(checkbox());
+    expect(screen.queryByText("Enabled")).toBeNull();
+  });
+
+  it("cannot be operated while disabled", () => {
+    render(
+      <Switch
+        label="Remove posts"
+        checked
+        disabled
+        onCheckedChange={vi.fn()}
+      />,
+    );
+
+    expect(checkbox().disabled).toBe(true);
   });
 });

@@ -11,22 +11,22 @@ Every feature is individually toggleable. Defaults are listed below, and your se
   - **Remove shelves**: hide the horizontal carousels, such as "Watch again" and "YouTube Playables". (on)
   - **Remove suggestion prompts**: hide the "Not interested?" nudge cards. (on)
   - **Remove topic chips**: hide the topic filter bar above the feed. (on)
-- **Short videos**: hide videos at or below a maximum length (default `00:01:00`) on the home feed and in the watch page recommendations, optionally including the Subscriptions feed (off by default). Search results and channel pages are never filtered. (on)
+- **Short videos**: hide videos at or below a maximum length (default `1:00`, written as on a video's thumbnail) on the home feed and in the watch page recommendations, optionally including the Subscriptions feed (off by default). Search results and channel pages are never filtered. (on)
 - **Shorts**
   - **Redirect to the video page**: rewrite `/shorts/<id>` URLs to `/watch?v=<id>`. (on)
   - **Remove from feeds**: hide Shorts shelves and Shorts items in the home feed and in search results, optionally including the Subscriptions feed (off by default). (on)
   - **Remove from the channel tabs**: hide the Shorts tab on channel pages. (off)
   - **Remove from the sidebar**: hide Shorts in the sidebar and mini guide. (on)
 
-The popup opens with a line reporting what the extension is doing on the page you have open, for example `On this page: 7 of 21 videos hidden`.
+The popup shows the three groups as cards, in your browser's light or dark theme. A click on a group's name opens its switches, one group at a time. Under Short videos it reports what that feature hid on the page you have open, for example `On this page: 7 of 21 videos hidden`.
 
 ### Presets
 
-The popup includes three one-click presets:
+The ⋯ menu in the popup's header holds three presets, each of which can be undone for 8 seconds:
 
-- **Recommended**: the default configuration.
-- **All**: enable every feature.
-- **None**: disable every feature.
+- **Reset to recommended**: the default configuration.
+- **Turn everything on**: enable every feature.
+- **Turn everything off**: disable every feature.
 
 ## Installation
 
@@ -37,7 +37,7 @@ Once installed, open YouTube and the extension applies your configuration automa
 
 ## Development
 
-Built with [WXT](https://wxt.dev), React, Tailwind CSS, and TypeScript. Requires [Bun](https://bun.sh) (a [devbox](https://www.jetify.com/devbox) config is included for a reproducible toolchain).
+Built with [WXT](https://wxt.dev), React and TypeScript. Requires [Bun](https://bun.sh) (a [devbox](https://www.jetify.com/devbox) config is included for a reproducible toolchain).
 
 ```bash
 git clone https://github.com/roman-16/simple-youtube.git

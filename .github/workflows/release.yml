@@ -82,9 +82,10 @@ jobs:
         with:
           name: extensions
           path: .
-      - uses: mnao305/chrome-extension-upload@v6.0.0
+      - uses: mnao305/chrome-extension-upload@v7.0.0
         with:
           extension-id: iecgbpoggpmlohjeojnjjihabobaaeek
+          publisher-id: ${{ secrets.CHROME_PUBLISHER_ID }}
           file-path: chrome-extension.zip
           client-id: ${{ secrets.CHROME_CLIENT_ID }}
           client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
